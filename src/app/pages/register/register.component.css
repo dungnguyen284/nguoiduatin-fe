@@ -1,0 +1,112 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.register-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.register-logo {
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.register-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.register-subtitle {
+  color: #8c8c8c;
+  font-size: 14px;
+  margin: 0;
+}
+
+.register-form {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.register-form nz-form-item {
+  margin-bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-form nz-form-label {
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.register-form nz-form-control {
+  width: 100%;
+}
+
+.register-footer {
+  text-align: center;
+}
+
+.register-footer p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.back-home-btn {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  z-index: 2;
+  background: #f5f5f5;
+  color: #595959;
+  border: none;
+  box-shadow: none;
+  font-size: 15px;
+  padding: 4px 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.back-home-btn:hover,
+.back-home-btn:focus {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 24px;
+  }
+  .register-title {
+    font-size: 24px;
+  }
+}

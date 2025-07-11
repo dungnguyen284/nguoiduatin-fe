@@ -1,0 +1,107 @@
+.fast-news-container {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 0;
+  font-size: 15px;
+}
+
+.fast-news-header {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 8px 16px 8px 0;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  gap: 4px;
+}
+
+.fast-news-title {
+  color: #222;
+}
+
+.fast-news-arrow {
+  color: #ff8c3a;
+  font-size: 18px;
+  margin-left: 4px;
+}
+
+.fast-news-list-scroll {
+  height: 144px; /* 3 tin, mỗi tin 48px */
+  overflow-y: auto;
+  background: #fff;
+  direction: rtl;
+}
+
+.fast-news-list-scroll > * {
+  direction: ltr;
+}
+
+.fast-news-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 16px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 12px;
+  transition: background 0.2s;
+  height: 48px;
+  box-sizing: border-box;
+}
+.fast-news-item:last-child {
+  border-bottom: none;
+}
+.fast-news-item.active {
+  border-left: 3px solid transparent;
+  background: #fdf6f0;
+}
+
+.fast-news-date {
+  color: #888;
+  font-size: 12px;
+  min-width: 44px;
+  text-align: right;
+  font-family: "Roboto Mono", monospace;
+}
+
+.fast-news-link {
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  flex: 1;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  line-height: 1.3;
+  max-height: 2.6em;
+}
+.fast-news-link:hover {
+  color: #ff8c3a;
+}
+
+/* Scrollbar màu cam */
+.fast-news-list-scroll::-webkit-scrollbar {
+  width: 6px;
+  left: 0;
+}
+.fast-news-list-scroll::-webkit-scrollbar-thumb {
+  background: #ff8c3a;
+  border-radius: 4px;
+}
+.fast-news-list-scroll::-webkit-scrollbar-track {
+  background: #f2f2f2;
+  border-radius: 4px;
+}
+
+/* Firefox */
+.fast-news-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #ff8c3a #f2f2f2;
+}

@@ -1,0 +1,89 @@
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <img src="assets/logo.svg" alt="Logo" class="logo" />
+      <div class="site-info">
+        <span class="site-title">NGƯỜI ĐƯA TIN</span>
+        <span class="site-desc">Tin hay không thì tùy</span>
+      </div>
+    </div>
+    <form class="header-search-bar" autocomplete="off">
+      <input
+        type="text"
+        [formControl]="searchControl"
+        placeholder="Tìm kiếm tin tức..."
+        (blur)="hideSuggestions()"
+        (focus)="onSearchFocus()"
+      />
+      <ul
+        *ngIf="suggestions.length > 0 && showSuggestions"
+        class="suggestion-list"
+        style="z-index: 2000"
+      >
+        <li *ngFor="let news of suggestions" (click)="goToDetail(news.id)">
+          <b>{{ news.title }}</b>
+        </li>
+      </ul>
+    </form>
+    <div class="header-right">
+      <button
+        nz-button
+        nzType="default"
+        style="margin-right: 12px"
+        *ngIf="isLoggedIn"
+      >
+        Watch list
+      </button>
+      <button
+        nz-button
+        nz-dropdown
+        [nzDropdownMenu]="menu"
+        nzPlacement="bottomRight"
+      >
+        <span nz-icon nzType="user"></span>
+      </button>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu nzSelectable>
+          <ng-container *ngIf="!isLoggedIn; else loggedInMenu">
+            <li nz-menu-item (click)="router.navigate(['/login'])">
+              Đăng nhập
+            </li>
+            <li nz-menu-item (click)="router.navigate(['/register'])">
+              Đăng ký
+            </li>
+          </ng-container>
+          <ng-template #loggedInMenu>
+            <ng-container *ngIf="userRole === 'Admin'; else journalistMenu">
+              <li nz-menu-item (click)="router.navigate(['/admin/dashboard'])">
+                Dashboard Admin
+              </li>
+              <li nz-menu-item (click)="onLogout()" nzDanger>Đăng xuất</li>
+            </ng-container>
+            <ng-template #journalistMenu>
+              <ng-container *ngIf="userRole === 'Journalist'; else defaultMenu">
+                <li
+                  nz-menu-item
+                  (click)="router.navigate(['/journalist/dashboard'])"
+                >
+                  Dashboard Phóng viên
+                </li>
+                <li nz-menu-item (click)="onLogout()" nzDanger>Đăng xuất</li>
+              </ng-container>
+              <ng-template #defaultMenu>
+                <ng-container *ngIf="userRole === 'Default'; else otherMenu">
+                  <li nz-menu-item (click)="onLogout()" nzDanger>Đăng xuất</li>
+                </ng-container>
+                <ng-template #otherMenu>
+                  <li nz-menu-item>1st menu item</li>
+                  <li nz-menu-item>2nd menu item</li>
+                  <li nz-menu-item>3rd menu item</li>
+                  <li nz-menu-item nzDanger>4th danger item</li>
+                </ng-template>
+              </ng-template>
+            </ng-template>
+          </ng-template>
+        </ul>
+      </nz-dropdown-menu>
+    </div>
+  </div>
+</header>

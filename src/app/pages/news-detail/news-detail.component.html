@@ -1,0 +1,47 @@
+<div class="news-detail-container">
+  <ng-container *ngIf="!loading; else loadingTpl">
+    <div class="breadcrumb">
+      <a routerLink="/">Trang chủ</a>
+      <span class="breadcrumb-separator">></span>
+      <span class="breadcrumb-current">{{ newsDetail?.categoryName }}</span>
+    </div>
+
+    <div class="news-header">
+      <h1 class="news-title">{{ newsDetail?.title }}</h1>
+      <div class="news-meta">
+        <span class="news-author">
+          <span nz-icon nzType="user"></span>
+          {{ newsDetail?.authorName }}
+        </span>
+        <span class="news-date">
+          <span nz-icon nzType="calendar"></span>
+          {{ newsDetail?.publicationDate | date : "dd/MM/yyyy HH:mm" }}
+        </span>
+        <span class="news-category">
+          <span nz-icon nzType="folder"></span>
+          {{ newsDetail?.categoryName }}
+        </span>
+      </div>
+    </div>
+
+    <div class="news-content">
+      <div [innerHTML]="newsDetail?.content"></div>
+    </div>
+
+    <nz-divider></nz-divider>
+
+    <div class="news-tags">
+      <span class="tags-label">Tags:</span>
+      <nz-tag *ngFor="let tag of newsDetail?.tags" [nzColor]="'blue'">
+        {{ tag.name }}
+      </nz-tag>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <div class="loading-container">
+      <nz-spin nzSize="large"></nz-spin>
+      <p>Đang tải tin tức...</p>
+    </div>
+  </ng-template>
+</div>

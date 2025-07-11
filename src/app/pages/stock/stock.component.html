@@ -1,0 +1,20 @@
+<div class="news-list-container">
+  <div
+    class="news-row"
+    *ngFor="let news of newsList"
+    (click)="navigateToDetail(news.id)"
+    style="cursor: pointer"
+  >
+    <img [src]="news.imageUrl" [alt]="news.title" />
+    <div class="news-row-content">
+      <div class="news-title-row">{{ news.title }}</div>
+      <div class="news-desc-row">{{ news.description }}</div>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 24px" *ngIf="newsList.length > 0">
+    <button nz-button nzType="primary" class="see-more-btn">Xem thêm</button>
+  </div>
+  <div *ngIf="loading" style="text-align: center; padding: 40px">
+    <nz-spin nzSize="large"></nz-spin>
+  </div>
+</div>

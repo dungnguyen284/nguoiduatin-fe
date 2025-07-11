@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Tìm kiếm</h2>
+<div mat-dialog-content>
+  <mat-form-field style="width: 100%">
+    <input
+      matInput
+      [(ngModel)]="keyword"
+      placeholder="Nhập mã CK, tin tức,..."
+    />
+  </mat-form-field>
+  <mat-radio-group
+    [(ngModel)]="searchType"
+    style="display: flex; gap: 16px; margin-bottom: 16px"
+  >
+    <mat-radio-button value="code">Mã CK</mat-radio-button>
+    <mat-radio-button value="news">Tin tức</mat-radio-button>
+  </mat-radio-group>
+  <mat-divider></mat-divider>
+  <div style="margin: 16px 0 8px 0; font-weight: 500">Truy cập nhanh</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px">
+    <a
+      *ngFor="let r of routes"
+      (click)="goto(r.path)"
+      style="
+        text-decoration: none;
+        color: #1976d2;
+        cursor: pointer;
+        font-weight: 500;
+      "
+      ># {{ r.label }}</a
+    >
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onClose()">Thoát</button>
+  <button mat-flat-button color="primary" (click)="onSearch()">Tìm kiếm</button>
+</div>

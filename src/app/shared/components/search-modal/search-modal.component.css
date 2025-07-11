@@ -1,0 +1,18 @@
+mat-form-field {
+  margin-bottom: 16px;
+}
+mat-radio-group {
+  margin-bottom: 12px;
+}
+[mat-dialog-content] {
+  min-width: 400px;
+}
+a {
+  border-radius: 4px;
+  padding: 2px 8px;
+  transition: background 0.2s;
+}
+a:hover {
+  background: #f0f0f0;
+  text-decoration: underline;
+}

@@ -1,0 +1,111 @@
+header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+nav {
+  padding: 8px 0;
+  font-weight: 500;
+}
+nav a {
+  text-decoration: none;
+  color: #222;
+  margin: 0 4px;
+}
+nav a:hover {
+  color: #1890ff;
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+}
+.site-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.1;
+}
+.logo {
+  height: 28px;
+  margin-right: 10px;
+}
+.site-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #1a237e;
+  margin-bottom: 4px;
+}
+.site-desc {
+  font-size: 0.7rem;
+  color: #888;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+}
+.ant-layout-header {
+  background: #fff !important;
+  box-shadow: 0 2px 8px #f0f1f2;
+  min-height: 56px !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+}
+.header-search-bar {
+  position: relative;
+  width: 320px;
+  margin: 0 16px;
+}
+.header-search-bar input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 32px;
+  outline: none;
+  transition: border 0.2s;
+}
+.header-search-bar input[type="text"]:focus {
+  border-color: #1890ff;
+}
+.suggestion-list {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 1000;
+  background: #fff;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.suggestion-list li {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.suggestion-list li:hover {
+  background: #f5f5f5;
+}
+.header-search-bar {
+  min-width: 500px;
+}

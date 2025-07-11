@@ -1,0 +1,14 @@
+<div class="stock-index-list">
+  <div class="stock-index-item" *ngFor="let idx of stockIndices$ | async">
+    <span class="stock-index-name">{{ idx.name }}</span>
+    <span class="stock-index-value">{{ idx.value | number : "1.2-2" }}</span>
+    <span class="stock-index-change" [ngClass]="{ up: idx.up, down: !idx.up }">
+      {{ idx.change > 0 ? "+" : "" }}{{ idx.change }}
+    </span>
+    <span class="stock-index-percent" [ngClass]="{ up: idx.up, down: !idx.up }">
+      {{ idx.percent }}
+      <span *ngIf="idx.up">&#9650;</span>
+      <span *ngIf="!idx.up">&#9660;</span>
+    </span>
+  </div>
+</div>

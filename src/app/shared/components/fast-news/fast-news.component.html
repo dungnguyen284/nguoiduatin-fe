@@ -1,0 +1,20 @@
+<div class="fast-news-container">
+  <div class="fast-news-header">
+    <span class="fast-news-title">Tin mới</span>
+    <span class="fast-news-arrow">&#9654;</span>
+  </div>
+  <div class="fast-news-list-scroll">
+    <div
+      *ngFor="let news of topNews$ | async; let i = index"
+      class="fast-news-item"
+      [class.active]="i === 0"
+    >
+      <span class="fast-news-date">{{
+        news.publicationDate | date : "HH:mm"
+      }}</span>
+      <a class="fast-news-link" [routerLink]="['/news', news.id]">{{
+        news.title
+      }}</a>
+    </div>
+  </div>
+</div>

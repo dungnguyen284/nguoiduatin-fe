@@ -1,0 +1,13 @@
+<div class="market-summary-list">
+  <div class="market-summary-item" *ngFor="let item of summary$ | async">
+    <span class="market-summary-name">{{ item.name }}</span>
+    <span
+      class="market-summary-value"
+      [ngClass]="{ up: item.up, down: item.down }"
+    >
+      {{ item.value }}
+      <span *ngIf="item.up">&#9650;</span>
+      <span *ngIf="item.down">&#9660;</span>
+    </span>
+  </div>
+</div>

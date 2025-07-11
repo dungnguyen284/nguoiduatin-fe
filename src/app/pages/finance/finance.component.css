@@ -1,0 +1,44 @@
+/* news-row style giống trang home */
+.news-list-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 0;
+}
+.news-row {
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  transition: box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  padding: 24px 32px;
+  background: #fff;
+}
+.news-row:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+.news-row img {
+  width: 140px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 32px;
+  flex-shrink: 0;
+}
+.news-row-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.news-title-row {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.news-desc-row {
+  color: #555;
+  font-size: 15px;
+}
+
+
+

@@ -1,0 +1,46 @@
+.stock-index-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+  border-radius: 4px;
+  padding: 8px 0;
+}
+.stock-index-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 12px;
+  font-family: "Roboto", Arial, sans-serif;
+}
+.stock-index-item:last-child {
+  border-bottom: none;
+}
+.stock-index-name {
+  flex: 1 1 120px;
+  font-weight: 500;
+  color: #1a237e;
+}
+.stock-index-value {
+  min-width: 90px;
+  text-align: right;
+  font-weight: bold;
+}
+.stock-index-change.up,
+.stock-index-percent.up {
+  color: #2ca02c;
+  font-weight: 500;
+}
+.stock-index-change.down,
+.stock-index-percent.down {
+  color: #e53935;
+  font-weight: 500;
+}
+.stock-index-change,
+.stock-index-percent {
+  min-width: 60px;
+  text-align: right;
+  margin-left: 8px;
+}

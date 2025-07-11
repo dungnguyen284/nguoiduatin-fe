@@ -1,0 +1,36 @@
+# Angular specific ignores
+node_modules/
+dist/
+tmp/
+out-tsc/
+coverage/
+.angular/
+.idea/
+.vscode/
+npm-debug.log*
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Compiled output
+*.js
+*.js.map
+*.css.map
+*.tsbuildinfo
+
+# Ignore all files in the environments folder (as shown in ![image1](image1))
+src/environments/*
+
+# Misc
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+*.env
+
+# Optional: ignore test coverage reports
+coverage/
