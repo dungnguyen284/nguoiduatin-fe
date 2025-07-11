@@ -37,4 +37,20 @@ export class NewsService {
       `${this.apiUrl}/api/News?$filter=contains(title,'${keyword}')`
     );
   }
+
+  getNewsPaged(skip: number, top: number): Observable<NewsResponseDTO[]> {
+    return this.http.get<NewsResponseDTO[]>(
+      `${this.apiUrl}/api/News?$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
+    );
+  }
+
+  getNewsByCategoryPaged(
+    categoryId: string,
+    skip: number,
+    top: number
+  ): Observable<NewsResponseDTO[]> {
+    return this.http.get<NewsResponseDTO[]>(
+      `${this.apiUrl}/api/News?$filter=categoryId eq ${categoryId}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
+    );
+  }
 }

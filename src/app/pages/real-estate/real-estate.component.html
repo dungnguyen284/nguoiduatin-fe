@@ -11,8 +11,16 @@
       <div class="news-desc-row">{{ news.description }}</div>
     </div>
   </div>
-  <div style="text-align: center; margin-top: 24px" *ngIf="newsList.length > 0">
-    <button nz-button nzType="primary" class="see-more-btn">Xem thêm</button>
+  <div style="text-align: center; margin-top: 24px" *ngIf="!allLoaded">
+    <button
+      nz-button
+      nzType="primary"
+      class="see-more-btn"
+      (click)="loadMore()"
+      [disabled]="loading"
+    >
+      Xem thêm
+    </button>
   </div>
   <div *ngIf="loading" style="text-align: center; padding: 40px">
     <nz-spin nzSize="large"></nz-spin>

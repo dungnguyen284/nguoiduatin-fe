@@ -31,33 +31,28 @@ import { RowNewsListComponent } from '../../../shared/components/row-news-list/r
 })
 export class NewsListComponent implements OnInit {
   newsList: NewsResponseDTO[] = [];
-  loading = true;
-  showAll = false;
+  page = 0;
+  pageSize = 10;
+  loading = false;
+  allLoaded = false;
 
   constructor(private newsService: NewsService, private router: Router) {}
 
   ngOnInit(): void {
-    this.loadTop10();
+    this.loadMore();
   }
 
-  loadTop10() {
+  loadMore() {
+    if (this.loading || this.allLoaded) return;
     this.loading = true;
     this.newsService
-      .getTopLatestNews(10)
-      .subscribe((news: NewsResponseDTO[]) => {
-        this.newsList = news;
+      .getNewsPaged(this.page * this.pageSize, this.pageSize)
+      .subscribe((news) => {
+        this.newsList = [...this.newsList, ...news];
         this.loading = false;
-        this.showAll = false;
+        if (news.length < this.pageSize) this.allLoaded = true;
+        else this.page++;
       });
-  }
-
-  loadAll() {
-    this.loading = true;
-    this.newsService.getAllNews().subscribe((news: NewsResponseDTO[]) => {
-      this.newsList = news;
-      this.loading = false;
-      this.showAll = true;
-    });
   }
 
   navigateToDetail(newsId: number | string) {

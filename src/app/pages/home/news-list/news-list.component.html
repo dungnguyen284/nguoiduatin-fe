@@ -3,18 +3,15 @@
     <app-feature-news-list [newsList]="newsList"></app-feature-news-list>
     <app-row-news-list [newsList]="newsList.slice(4)"></app-row-news-list>
   </div>
-  <div style="text-align: center; margin-top: 24px" *ngIf="newsList.length > 0">
+  <div style="text-align: center; margin-top: 24px" *ngIf="!allLoaded">
     <button
       nz-button
       nzType="primary"
       class="see-more-btn"
-      *ngIf="!showAll"
-      (click)="loadAll()"
+      (click)="loadMore()"
+      [disabled]="loading"
     >
       Xem thêm
-    </button>
-    <button nz-button nzType="default" *ngIf="showAll" (click)="loadTop10()">
-      Thu gọn
     </button>
   </div>
 </ng-container>

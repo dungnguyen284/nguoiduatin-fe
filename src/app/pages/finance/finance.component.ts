@@ -15,16 +15,32 @@ import { Router } from '@angular/router';
 })
 export class FinanceComponent implements OnInit {
   newsList: NewsResponseDTO[] = [];
-  loading = true;
+  page = 0;
+  pageSize = 10;
+  loading = false;
+  allLoaded = false;
+  categoryId = '2';
 
   constructor(private newsService: NewsService, private router: Router) {}
 
   ngOnInit(): void {
+    this.loadMore();
+  }
+
+  loadMore() {
+    if (this.loading || this.allLoaded) return;
+    this.loading = true;
     this.newsService
-      .getNewsByCategory('2')
-      .subscribe((news: NewsResponseDTO[]) => {
-        this.newsList = news;
+      .getNewsByCategoryPaged(
+        this.categoryId,
+        this.page * this.pageSize,
+        this.pageSize
+      )
+      .subscribe((news) => {
+        this.newsList = [...this.newsList, ...news];
         this.loading = false;
+        if (news.length < this.pageSize) this.allLoaded = true;
+        else this.page++;
       });
   }
 
