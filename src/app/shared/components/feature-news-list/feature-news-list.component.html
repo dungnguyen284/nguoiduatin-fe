@@ -1,0 +1,30 @@
+<div class="feature-news-container" *ngIf="newsList.length > 0">
+  <div class="feature-news-top" (click)="goToDetail(newsList[0].id)">
+    <img
+      [src]="newsList[0].imageUrl"
+      [alt]="newsList[0].title"
+      class="feature-news-top-img"
+    />
+    <div class="feature-news-top-content">
+      <div class="feature-news-top-title">{{ newsList[0].title }}</div>
+      <div class="feature-news-top-desc">{{ newsList[0].description }}</div>
+    </div>
+  </div>
+  <div class="feature-news-bottom">
+    <div
+      class="feature-news-bottom-item"
+      *ngFor="let news of newsList.slice(1, 4)"
+      (click)="goToDetail(news.id)"
+    >
+      <img
+        [src]="news.imageUrl"
+        [alt]="news.title"
+        class="feature-news-bottom-img"
+      />
+      <div class="feature-news-bottom-content">
+        <div class="feature-news-bottom-title">{{ news.title }}</div>
+        <div class="feature-news-bottom-desc">{{ news.description }}</div>
+      </div>
+    </div>
+  </div>
+</div>

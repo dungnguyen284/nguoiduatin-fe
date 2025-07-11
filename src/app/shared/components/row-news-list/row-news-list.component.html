@@ -1,0 +1,13 @@
+<div class="row-news-list">
+  <div
+    *ngFor="let news of newsList"
+    class="row-news-item"
+    (click)="goToDetail(news.id)"
+  >
+    <img [src]="news.imageUrl" [alt]="news.title" class="row-news-img" />
+    <div class="row-news-content">
+      <div class="row-news-title">{{ news.title }}</div>
+      <div class="row-news-desc">{{ news.description }}</div>
+    </div>
+  </div>
+</div>

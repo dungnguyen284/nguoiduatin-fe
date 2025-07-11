@@ -8,6 +8,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NewsService } from '../../../services/news.service';
 import { NewsResponseDTO } from '../../../models/news-response.model';
+import { FeatureNewsListComponent } from '../../../shared/components/feature-news-list/feature-news-list.component';
+import { RowNewsListComponent } from '../../../shared/components/row-news-list/row-news-list.component';
 
 @Component({
   selector: 'app-news-list',
@@ -20,6 +22,8 @@ import { NewsResponseDTO } from '../../../models/news-response.model';
     NzSpinModule,
     NzTagModule,
     NzIconModule,
+    FeatureNewsListComponent,
+    RowNewsListComponent,
   ],
   templateUrl: './news-list.component.html',
   styleUrl: './news-list.component.css',
@@ -28,13 +32,31 @@ import { NewsResponseDTO } from '../../../models/news-response.model';
 export class NewsListComponent implements OnInit {
   newsList: NewsResponseDTO[] = [];
   loading = true;
+  showAll = false;
 
   constructor(private newsService: NewsService, private router: Router) {}
 
   ngOnInit(): void {
+    this.loadTop10();
+  }
+
+  loadTop10() {
+    this.loading = true;
+    this.newsService
+      .getTopLatestNews(10)
+      .subscribe((news: NewsResponseDTO[]) => {
+        this.newsList = news;
+        this.loading = false;
+        this.showAll = false;
+      });
+  }
+
+  loadAll() {
+    this.loading = true;
     this.newsService.getAllNews().subscribe((news: NewsResponseDTO[]) => {
       this.newsList = news;
       this.loading = false;
+      this.showAll = true;
     });
   }
 

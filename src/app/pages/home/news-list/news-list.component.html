@@ -1,72 +1,21 @@
 <ng-container *ngIf="!loading; else loadingTpl">
   <div class="news-list-container">
-    <div
-      class="news-featured"
-      *ngIf="newsList.length > 0"
-      (click)="navigateToDetail(newsList[0].id)"
-      style="cursor: pointer"
-    >
-      <nz-card [nzHoverable]="true">
-        <div class="news-featured-flex">
-          <div class="news-featured-img">
-            <img
-              [src]="newsList[0].imageUrl"
-              [alt]="newsList[0].title"
-              style="
-                width: 100%;
-                height: auto;
-                border-radius: 8px;
-                object-fit: cover;
-              "
-            />
-          </div>
-          <div class="news-featured-content">
-            <h2 class="news-title">{{ newsList[0].title }}</h2>
-            <div class="news-desc">{{ newsList[0].description }}</div>
-          </div>
-        </div>
-      </nz-card>
-    </div>
-    <div class="news-grid">
-      <nz-card
-        *ngFor="let news of newsList.slice(1, 4)"
-        [nzHoverable]="true"
-        (click)="navigateToDetail(news.id)"
-        style="cursor: pointer; margin-bottom: 16px"
-      >
-        <img
-          [src]="news.imageUrl"
-          [alt]="news.title"
-          style="
-            width: 100%;
-            height: auto;
-            border-radius: 6px;
-            object-fit: cover;
-          "
-        />
-        <div class="news-title-small">{{ news.title }}</div>
-        <div class="news-desc-small">{{ news.description }}</div>
-      </nz-card>
-    </div>
-    <div
-      class="news-row"
-      *ngFor="let news of newsList.slice(4)"
-      (click)="navigateToDetail(news.id)"
-      style="cursor: pointer"
-    >
-      <nz-card [nzHoverable]="true" style="margin-bottom: 12px">
-        <div style="display: flex; align-items: center">
-          <img [src]="news.imageUrl" [alt]="news.title" />
-          <div class="news-row-content">
-            <div class="news-title-row">{{ news.title }}</div>
-            <div class="news-desc-row">{{ news.description }}</div>
-          </div>
-        </div>
-      </nz-card>
-    </div>
+    <app-feature-news-list [newsList]="newsList"></app-feature-news-list>
+    <app-row-news-list [newsList]="newsList.slice(4)"></app-row-news-list>
   </div>
   <div style="text-align: center; margin-top: 24px" *ngIf="newsList.length > 0">
-    <button nz-button nzType="primary" class="see-more-btn">Xem thêm</button>
+    <button
+      nz-button
+      nzType="primary"
+      class="see-more-btn"
+      *ngIf="!showAll"
+      (click)="loadAll()"
+    >
+      Xem thêm
+    </button>
+    <button nz-button nzType="default" *ngIf="showAll" (click)="loadTop10()">
+      Thu gọn
+    </button>
   </div>
 </ng-container>
 <ng-template #loadingTpl>

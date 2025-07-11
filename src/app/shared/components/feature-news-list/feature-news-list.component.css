@@ -1,0 +1,110 @@
+.feature-news-container {
+  width: 100%;
+  margin-bottom: 32px;
+}
+.feature-news-top {
+  display: flex;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 28px;
+  transition: box-shadow 0.2s;
+  padding: 36px 32px 36px 32px;
+}
+.feature-news-top:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+}
+.feature-news-top-img {
+  width: 340px;
+  min-width: 220px;
+  max-width: 420px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-right: 36px;
+}
+.feature-news-top-content {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.feature-news-top-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 14px;
+  color: #1a237e;
+  line-height: 1.35;
+}
+.feature-news-top-desc {
+  color: #555;
+  font-size: 17px;
+  margin-bottom: 8px;
+  line-height: 1.7;
+}
+.feature-news-bottom {
+  display: flex;
+  gap: 24px;
+}
+.feature-news-bottom-item {
+  flex: 1 1 0;
+  min-width: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 12px 18px;
+}
+.feature-news-bottom-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+}
+.feature-news-bottom-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.feature-news-bottom-content {
+  padding: 0;
+}
+.feature-news-bottom-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1a237e;
+}
+.feature-news-bottom-desc {
+  color: #555;
+  font-size: 15px;
+}
+@media (max-width: 900px) {
+  .feature-news-top {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px 8px;
+  }
+  .feature-news-top-img {
+    width: 100%;
+    max-width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  .feature-news-bottom {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .feature-news-bottom-item {
+    padding: 12px 8px 8px 8px;
+  }
+}
