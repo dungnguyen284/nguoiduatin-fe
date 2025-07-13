@@ -1,0 +1,164 @@
+.journalist-dashboard {
+  padding: 0;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-title span {
+  font-size: 28px;
+  color: #1890ff;
+}
+
+.stats-row {
+  margin-bottom: 24px;
+}
+
+.stats-row nz-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.stats-row nz-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.main-content-row {
+  margin-bottom: 24px;
+}
+
+.main-content-row nz-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.article-title {
+  font-weight: 500;
+  color: #1f1f1f;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notifications-card {
+  margin-bottom: 16px;
+}
+
+.notifications-card nz-list-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notifications-card nz-list-item:last-child {
+  border-bottom: none;
+}
+
+.notifications-card nz-list-item-meta-title {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.notifications-card nz-list-item-meta-description {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.quick-actions-card {
+  margin-bottom: 16px;
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.performance-card {
+  margin-bottom: 16px;
+}
+
+.performance-item {
+  margin-bottom: 20px;
+}
+
+.performance-item:last-child {
+  margin-bottom: 0;
+}
+
+.performance-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f1f1f;
+  margin-bottom: 8px;
+}
+
+.performance-value {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Table styles */
+nz-table {
+  border-radius: 6px;
+}
+
+nz-table th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+nz-table td {
+  vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .stats-row nz-col {
+    margin-bottom: 16px;
+  }
+
+  .main-content-row nz-col:first-child {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 20px;
+  }
+
+  .stats-row nz-col {
+    /* Mobile responsive adjustments */
+  }
+
+  .main-content-row nz-col:first-child {
+    /* Mobile responsive adjustments */
+  }
+
+  .main-content-row nz-col:last-child {
+    /* Mobile responsive adjustments */
+  }
+}

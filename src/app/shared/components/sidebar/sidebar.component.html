@@ -1,0 +1,73 @@
+<nz-sider
+  nzCollapsible
+  [(nzCollapsed)]="isCollapsed"
+  [nzTrigger]="null"
+  class="dashboard-sidebar"
+>
+  <!-- User Profile Section -->
+  <div class="user-profile-section">
+    <nz-avatar nzSize="large" nzIcon="user" class="user-avatar"></nz-avatar>
+    <div class="user-info" *ngIf="!isCollapsed">
+      <div class="user-name">{{ userName || "Người dùng" }}</div>
+      <div class="user-email">{{ userEmail || "user@example.com" }}</div>
+      <div class="user-role">{{ userRole }}</div>
+    </div>
+  </div>
+
+  <nz-divider></nz-divider>
+
+  <!-- Navigation Menu -->
+  <ul nz-menu nzTheme="dark" nzMode="inline" class="sidebar-menu">
+    <ng-container *ngFor="let item of menuItems">
+      <!-- Menu item with children -->
+      <li
+        nz-submenu
+        *ngIf="item.children && item.children.length > 0"
+        [nzTitle]="itemTitle"
+        [nzIcon]="item.icon"
+      >
+        <ng-template #itemTitle>
+          <span>{{ item.label }}</span>
+        </ng-template>
+
+        <ul>
+          <li
+            nz-menu-item
+            *ngFor="let child of item.children"
+            (click)="onMenuClick(child)"
+            [nzDisabled]="child.disabled"
+          >
+            <span nz-icon [nzType]="child.icon"></span>
+            <span>{{ child.label }}</span>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Single menu item -->
+      <li
+        nz-menu-item
+        *ngIf="!item.children || item.children.length === 0"
+        (click)="onMenuClick(item)"
+        [nzDisabled]="item.disabled"
+      >
+        <span nz-icon [nzType]="item.icon"></span>
+        <span>{{ item.label }}</span>
+      </li>
+    </ng-container>
+  </ul>
+
+  <!-- Logout Section -->
+  <div class="logout-section">
+    <nz-divider></nz-divider>
+    <button
+      nz-button
+      nzType="text"
+      nzDanger
+      (click)="onLogout()"
+      class="logout-button"
+    >
+      <span nz-icon nzType="logout"></span>
+      <span *ngIf="!isCollapsed">Đăng xuất</span>
+    </button>
+  </div>
+</nz-sider>

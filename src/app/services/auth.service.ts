@@ -65,6 +65,25 @@ export class AuthService {
     }
   }
 
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      // Thường user id sẽ nằm ở claim 'nameidentifier' hoặc tương tự
+      return (
+        decoded[
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+        ] ||
+        decoded['sub'] ||
+        null
+      );
+    } catch {
+      return null;
+    }
+  }
+
   private hasToken(): boolean {
     return !!sessionStorage.getItem(this.tokenKey);
   }

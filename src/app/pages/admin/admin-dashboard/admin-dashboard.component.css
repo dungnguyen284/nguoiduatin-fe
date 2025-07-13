@@ -1,0 +1,167 @@
+.admin-dashboard {
+  padding: 0;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-title span {
+  font-size: 28px;
+  color: #1890ff;
+}
+
+.stats-row {
+  margin-bottom: 24px;
+}
+
+.stats-row nz-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.stats-row nz-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.main-content-row {
+  margin-bottom: 24px;
+}
+
+.main-content-row nz-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-row {
+  margin-bottom: 24px;
+}
+
+.bottom-row nz-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.article-title {
+  font-weight: 500;
+  color: #1f1f1f;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #1f1f1f;
+}
+
+.alerts-card {
+  margin-bottom: 16px;
+}
+
+.alerts-card nz-list-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.alerts-card nz-list-item:last-child {
+  border-bottom: none;
+}
+
+.alerts-card nz-list-item-meta-title {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.alerts-card nz-list-item-meta-description {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.quick-actions-card {
+  margin-bottom: 16px;
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+/* Table styles */
+nz-table {
+  border-radius: 6px;
+}
+
+nz-table th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+nz-table td {
+  vertical-align: middle;
+}
+
+/* Badge styles */
+nz-badge {
+  margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .stats-row nz-col {
+    margin-bottom: 16px;
+  }
+
+  .main-content-row nz-col {
+    margin-bottom: 16px;
+  }
+
+  .bottom-row nz-col {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 20px;
+  }
+
+  .stats-row nz-col {
+    /* Mobile responsive adjustments */
+  }
+
+  .main-content-row nz-col {
+    /* Mobile responsive adjustments */
+  }
+
+  .bottom-row nz-col {
+    /* Mobile responsive adjustments */
+  }
+}

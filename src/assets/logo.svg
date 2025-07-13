@@ -1,0 +1,18 @@
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Nền tím nhạt -->
+  <rect x="10" y="20" width="160" height="140" rx="20" fill="#e6d6fa" stroke="#a259f7" stroke-width="5"/>
+  <!-- Dải cam phía trên -->
+  <rect x="10" y="20" width="160" height="32" rx="12" fill="#ffb46a"/>
+  <!-- Tên app -->
+  <text x="90" y="45" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" font-weight="bold" fill="#a259f7">STOCK NEWS</text>
+  <!-- Biểu đồ chứng khoán -->
+  <polyline points="40,130 70,90 100,120 130,70 160,110" fill="none" stroke="#ff6a88" stroke-width="8"/>
+  <!-- Các cột biểu đồ -->
+  <rect x="35" y="130" width="10" height="20" rx="3" fill="#a259f7"/>
+  <rect x="67" y="90" width="10" height="60" rx="3" fill="#ffb46a"/>
+  <rect x="97" y="120" width="10" height="30" rx="3" fill="#a259f7"/>
+  <rect x="127" y="70" width="10" height="80" rx="3" fill="#ffb46a"/>
+  <rect x="157" y="110" width="10" height="40" rx="3" fill="#a259f7"/>
+  <!-- Chữ S trên biểu đồ -->
+  <text x="90" y="110" text-anchor="middle" font-size="46" font-family="Arial, sans-serif" font-weight="bold" fill="#ffb46a" opacity="0.15">S</text>
+</svg>

@@ -1,7 +1,7 @@
 <header>
   <div class="header-inner">
     <div class="header-left">
-      <img src="assets/logo.svg" alt="Logo" class="logo" />
+      <img src="../../../../assets/logo.svg" alt="Logo" class="logo" />
       <div class="site-info">
         <span class="site-title">NGƯỜI ĐƯA TIN</span>
         <span class="site-desc">Tin hay không thì tùy</span>
@@ -45,39 +45,66 @@
       <nz-dropdown-menu #menu="nzDropdownMenu">
         <ul nz-menu nzSelectable>
           <ng-container *ngIf="!isLoggedIn; else loggedInMenu">
-            <li nz-menu-item (click)="router.navigate(['/login'])">
+            <li nz-menu-item (click)="onLogin()">
+              <span nz-icon nzType="login" nzTheme="outline"></span>
               Đăng nhập
             </li>
-            <li nz-menu-item (click)="router.navigate(['/register'])">
+            <li nz-menu-item (click)="onRegister()">
+              <span nz-icon nzType="user-add" nzTheme="outline"></span>
               Đăng ký
             </li>
           </ng-container>
           <ng-template #loggedInMenu>
+            <li nz-menu-item (click)="onProfile()">
+              <span nz-icon nzType="user" nzTheme="outline"></span>
+              Hồ sơ cá nhân
+            </li>
+            <li nz-menu-divider></li>
             <ng-container *ngIf="userRole === 'Admin'; else journalistMenu">
-              <li nz-menu-item (click)="router.navigate(['/admin/dashboard'])">
+              <li nz-menu-item (click)="onAdminDashboard()">
+                <span nz-icon nzType="dashboard" nzTheme="outline"></span>
                 Dashboard Admin
               </li>
-              <li nz-menu-item (click)="onLogout()" nzDanger>Đăng xuất</li>
+              <li nz-menu-item (click)="onLogout()" nzDanger>
+                <span nz-icon nzType="logout" nzTheme="outline"></span>
+                Đăng xuất
+              </li>
             </ng-container>
             <ng-template #journalistMenu>
               <ng-container *ngIf="userRole === 'Journalist'; else defaultMenu">
-                <li
-                  nz-menu-item
-                  (click)="router.navigate(['/journalist/dashboard'])"
-                >
+                <li nz-menu-item (click)="onJournalistDashboard()">
+                  <span nz-icon nzType="edit" nzTheme="outline"></span>
                   Dashboard Phóng viên
                 </li>
-                <li nz-menu-item (click)="onLogout()" nzDanger>Đăng xuất</li>
+                <li nz-menu-item (click)="onLogout()" nzDanger>
+                  <span nz-icon nzType="logout" nzTheme="outline"></span>
+                  Đăng xuất
+                </li>
               </ng-container>
               <ng-template #defaultMenu>
                 <ng-container *ngIf="userRole === 'Default'; else otherMenu">
-                  <li nz-menu-item (click)="onLogout()" nzDanger>Đăng xuất</li>
+                  <li nz-menu-item (click)="onLogout()" nzDanger>
+                    <span nz-icon nzType="logout" nzTheme="outline"></span>
+                    Đăng xuất
+                  </li>
                 </ng-container>
                 <ng-template #otherMenu>
-                  <li nz-menu-item>1st menu item</li>
-                  <li nz-menu-item>2nd menu item</li>
-                  <li nz-menu-item>3rd menu item</li>
-                  <li nz-menu-item nzDanger>4th danger item</li>
+                  <li nz-menu-item>
+                    <span nz-icon nzType="setting" nzTheme="outline"></span>
+                    1st menu item
+                  </li>
+                  <li nz-menu-item>
+                    <span nz-icon nzType="setting" nzTheme="outline"></span>
+                    2nd menu item
+                  </li>
+                  <li nz-menu-item>
+                    <span nz-icon nzType="setting" nzTheme="outline"></span>
+                    3rd menu item
+                  </li>
+                  <li nz-menu-item nzDanger>
+                    <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    4th danger item
+                  </li>
                 </ng-template>
               </ng-template>
             </ng-template>

@@ -1,0 +1,185 @@
+<div class="journalist-dashboard">
+  <h1 class="dashboard-title">
+    <span nz-icon nzType="dashboard" nzTheme="outline"></span>
+    Dashboard Phóng viên
+  </h1>
+
+  <!-- Statistics Cards -->
+  <nz-row [nzGutter]="16" class="stats-row">
+    <nz-col [nzSpan]="6">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Tổng bài viết"
+          [nzValue]="statistics.totalArticles"
+          nzPrefix="📝"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="6">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Đã xuất bản"
+          [nzValue]="statistics.publishedArticles"
+          nzPrefix="✅"
+          [nzValueStyle]="{ color: '#52c41a' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="6">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Chờ duyệt"
+          [nzValue]="statistics.pendingArticles"
+          nzPrefix="⏳"
+          [nzValueStyle]="{ color: '#faad14' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="6">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Tổng lượt xem"
+          [nzValue]="statistics.totalViews"
+          nzPrefix="👁️"
+          [nzValueStyle]="{ color: '#1890ff' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+
+  <!-- Main Content Row -->
+  <nz-row [nzGutter]="16" class="main-content-row">
+    <!-- Recent Articles Table -->
+    <nz-col [nzSpan]="16">
+      <nz-card nzTitle="Bài viết gần đây" [nzExtra]="extraTemplate">
+        <nz-table
+          #basicTable
+          [nzData]="recentArticles"
+          [nzPageSize]="5"
+          [nzShowPagination]="false"
+        >
+          <thead>
+            <tr>
+              <th>Tiêu đề</th>
+              <th>Trạng thái</th>
+              <th>Lượt xem</th>
+              <th>Lượt thích</th>
+              <th>Ngày xuất bản</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of basicTable.data">
+              <td>
+                <div class="article-title">{{ article.title }}</div>
+              </td>
+              <td>
+                <nz-tag [nzColor]="getStatusColor(article.status)">
+                  {{ getStatusText(article.status) }}
+                </nz-tag>
+              </td>
+              <td>{{ article.views.toLocaleString() }}</td>
+              <td>{{ article.likes.toLocaleString() }}</td>
+              <td>{{ article.publishDate | date : "dd/MM/yyyy" }}</td>
+              <td>
+                <button nz-button nzType="link" nzSize="small">
+                  <span nz-icon nzType="eye"></span>
+                  Xem
+                </button>
+                <button nz-button nzType="link" nzSize="small">
+                  <span nz-icon nzType="edit"></span>
+                  Sửa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </nz-col>
+
+    <!-- Notifications and Quick Actions -->
+    <nz-col [nzSpan]="8">
+      <!-- Notifications -->
+      <nz-card nzTitle="Thông báo" class="notifications-card">
+        <nz-list
+          [nzDataSource]="notifications"
+          [nzRenderItem]="notificationItem"
+          [nzItemLayout]="'horizontal'"
+          [nzSize]="'small'"
+        >
+          <ng-template #notificationItem let-item>
+            <nz-list-item>
+              <nz-list-item-meta>
+                <nz-list-item-meta-avatar>
+                  <span
+                    nz-icon
+                    [nzType]="getNotificationIcon(item.type)"
+                    [style.color]="getNotificationColor(item.type)"
+                  ></span>
+                </nz-list-item-meta-avatar>
+                <nz-list-item-meta-title>
+                  {{ item.message }}
+                </nz-list-item-meta-title>
+                <nz-list-item-meta-description>
+                  {{ item.time }}
+                </nz-list-item-meta-description>
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </nz-card>
+
+      <!-- Quick Actions -->
+      <nz-card nzTitle="Thao tác nhanh" class="quick-actions-card">
+        <div class="quick-actions">
+          <button nz-button nzType="primary" nzBlock class="action-btn">
+            <span nz-icon nzType="plus"></span>
+            Tạo bài viết mới
+          </button>
+          <button nz-button nzType="default" nzBlock class="action-btn">
+            <span nz-icon nzType="edit"></span>
+            Chỉnh sửa bản nháp
+          </button>
+          <button nz-button nzType="default" nzBlock class="action-btn">
+            <span nz-icon nzType="bar-chart"></span>
+            Xem thống kê
+          </button>
+        </div>
+      </nz-card>
+
+      <!-- Performance Progress -->
+      <nz-card nzTitle="Hiệu suất tháng này" class="performance-card">
+        <div class="performance-item">
+          <div class="performance-label">Lượt xem</div>
+          <nz-progress
+            [nzPercent]="(statistics.monthlyViews / 5000) * 100"
+            [nzShowInfo]="false"
+            nzStatus="active"
+          ></nz-progress>
+          <div class="performance-value">
+            {{ statistics.monthlyViews.toLocaleString() }} / 5,000
+          </div>
+        </div>
+
+        <div class="performance-item">
+          <div class="performance-label">Bài viết đã xuất bản</div>
+          <nz-progress
+            [nzPercent]="(statistics.publishedArticles / 50) * 100"
+            [nzShowInfo]="false"
+            nzStatus="success"
+          ></nz-progress>
+          <div class="performance-value">
+            {{ statistics.publishedArticles }} / 50
+          </div>
+        </div>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+</div>
+
+<ng-template #extraTemplate>
+  <button nz-button nzType="link">
+    <span nz-icon nzType="reload"></span>
+    Làm mới
+  </button>
+</ng-template>

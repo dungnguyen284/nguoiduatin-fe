@@ -1,0 +1,261 @@
+<div class="admin-dashboard">
+  <h1 class="dashboard-title">
+    <span nz-icon nzType="dashboard" nzTheme="outline"></span>
+    Dashboard Admin
+  </h1>
+
+  <!-- Statistics Cards -->
+  <nz-row [nzGutter]="16" class="stats-row">
+    <nz-col [nzSpan]="4">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Tổng người dùng"
+          [nzValue]="statistics.totalUsers"
+          nzPrefix="👥"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="4">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Tổng bài viết"
+          [nzValue]="statistics.totalArticles"
+          nzPrefix="📝"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="4">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Bài viết chờ duyệt"
+          [nzValue]="statistics.pendingArticles"
+          nzPrefix="⏳"
+          [nzValueStyle]="{ color: '#faad14' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="4">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Tổng lượt xem"
+          [nzValue]="statistics.totalViews"
+          nzPrefix="👁️"
+          [nzValueStyle]="{ color: '#1890ff' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="4">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Doanh thu (VNĐ)"
+          [nzValue]="statistics.totalRevenue"
+          nzPrefix="💰"
+          [nzValueStyle]="{ color: '#52c41a' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="4">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Tăng trưởng tháng (%)"
+          [nzValue]="statistics.monthlyGrowth"
+          nzPrefix="📈"
+          [nzValueStyle]="{ color: '#52c41a' }"
+        ></nz-statistic>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+
+  <!-- Main Content Row -->
+  <nz-row [nzGutter]="16" class="main-content-row">
+    <!-- Pending Articles Table -->
+    <nz-col [nzSpan]="12">
+      <nz-card nzTitle="Bài viết chờ duyệt" [nzExtra]="pendingExtraTemplate">
+        <nz-table
+          #pendingTable
+          [nzData]="pendingArticles"
+          [nzPageSize]="5"
+          [nzShowPagination]="false"
+        >
+          <thead>
+            <tr>
+              <th>Tiêu đề</th>
+              <th>Tác giả</th>
+              <th>Danh mục</th>
+              <th>Độ ưu tiên</th>
+              <th>Ngày gửi</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of pendingTable.data">
+              <td>
+                <div class="article-title">{{ article.title }}</div>
+              </td>
+              <td>{{ article.author }}</td>
+              <td>{{ article.category }}</td>
+              <td>
+                <nz-tag [nzColor]="getPriorityColor(article.priority)">
+                  {{ getPriorityText(article.priority) }}
+                </nz-tag>
+              </td>
+              <td>{{ article.submitDate | date : "dd/MM/yyyy" }}</td>
+              <td>
+                <button nz-button nzType="link" nzSize="small">
+                  <span nz-icon nzType="eye"></span>
+                  Xem
+                </button>
+                <button nz-button nzType="link" nzSize="small">
+                  <span nz-icon nzType="check"></span>
+                  Duyệt
+                </button>
+                <button nz-button nzType="link" nzSize="small" nzDanger>
+                  <span nz-icon nzType="close"></span>
+                  Từ chối
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </nz-col>
+
+    <!-- Recent Users Table -->
+    <nz-col [nzSpan]="12">
+      <nz-card nzTitle="Người dùng gần đây" [nzExtra]="usersExtraTemplate">
+        <nz-table
+          #usersTable
+          [nzData]="recentUsers"
+          [nzPageSize]="5"
+          [nzShowPagination]="false"
+        >
+          <thead>
+            <tr>
+              <th>Tên</th>
+              <th>Email</th>
+              <th>Vai trò</th>
+              <th>Trạng thái</th>
+              <th>Ngày tham gia</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of usersTable.data">
+              <td>
+                <div class="user-info">
+                  <nz-avatar nzSize="small" nzIcon="user"></nz-avatar>
+                  <span class="user-name">{{ user.name }}</span>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <nz-tag
+                  [nzColor]="
+                    user.role === 'Admin'
+                      ? 'red'
+                      : user.role === 'Journalist'
+                      ? 'blue'
+                      : 'default'
+                  "
+                >
+                  {{ user.role }}
+                </nz-tag>
+              </td>
+              <td>
+                <nz-tag [nzColor]="getStatusColor(user.status)">
+                  {{ getStatusText(user.status) }}
+                </nz-tag>
+              </td>
+              <td>{{ user.joinDate | date : "dd/MM/yyyy" }}</td>
+              <td>
+                <button nz-button nzType="link" nzSize="small">
+                  <span nz-icon nzType="eye"></span>
+                  Xem
+                </button>
+                <button nz-button nzType="link" nzSize="small">
+                  <span nz-icon nzType="edit"></span>
+                  Sửa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+
+  <!-- System Alerts and Quick Actions -->
+  <nz-row [nzGutter]="16" class="bottom-row">
+    <!-- System Alerts -->
+    <nz-col [nzSpan]="12">
+      <nz-card nzTitle="Cảnh báo hệ thống" class="alerts-card">
+        <nz-list
+          [nzDataSource]="systemAlerts"
+          [nzRenderItem]="alertItem"
+          [nzItemLayout]="'horizontal'"
+          [nzSize]="'small'"
+        >
+          <ng-template #alertItem let-item>
+            <nz-list-item>
+              <nz-list-item-meta>
+                <nz-list-item-meta-avatar>
+                  <span
+                    nz-icon
+                    [nzType]="getAlertIcon(item.type)"
+                    [style.color]="getAlertColor(item.type)"
+                  ></span>
+                </nz-list-item-meta-avatar>
+                <nz-list-item-meta-title>
+                  {{ item.message }}
+                </nz-list-item-meta-title>
+                <nz-list-item-meta-description>
+                  {{ item.time }}
+                </nz-list-item-meta-description>
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+
+    <!-- Quick Actions -->
+    <nz-col [nzSpan]="12">
+      <nz-card nzTitle="Thao tác nhanh" class="quick-actions-card">
+        <div class="quick-actions">
+          <button nz-button nzType="primary" nzBlock class="action-btn">
+            <span nz-icon nzType="user-add"></span>
+            Thêm người dùng mới
+          </button>
+          <button nz-button nzType="default" nzBlock class="action-btn">
+            <span nz-icon nzType="setting"></span>
+            Cài đặt hệ thống
+          </button>
+          <button nz-button nzType="default" nzBlock class="action-btn">
+            <span nz-icon nzType="bar-chart"></span>
+            Xem báo cáo
+          </button>
+          <button nz-button nzType="default" nzBlock class="action-btn">
+            <span nz-icon nzType="database"></span>
+            Backup dữ liệu
+          </button>
+        </div>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+</div>
+
+<ng-template #pendingExtraTemplate>
+  <nz-badge [nzCount]="statistics.pendingArticles" [nzOverflowCount]="99">
+    <button nz-button nzType="link">
+      <span nz-icon nzType="reload"></span>
+      Làm mới
+    </button>
+  </nz-badge>
+</ng-template>
+
+<ng-template #usersExtraTemplate>
+  <button nz-button nzType="link">
+    <span nz-icon nzType="reload"></span>
+    Làm mới
+  </button>
+</ng-template>

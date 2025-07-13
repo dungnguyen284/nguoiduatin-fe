@@ -1,0 +1,78 @@
+<nz-layout class="dashboard-layout">
+  <nz-sider
+    nzCollapsible
+    [(nzCollapsed)]="sidebarCollapsed"
+    [nzWidth]="200"
+    [nzCollapsedWidth]="80"
+    class="dashboard-sidebar"
+  >
+    <app-sidebar
+      [userRole]="userRole || ''"
+      [userName]="userName"
+      [userEmail]="userEmail"
+      [isCollapsed]="sidebarCollapsed"
+    ></app-sidebar>
+  </nz-sider>
+  <nz-layout>
+    <nz-header class="dashboard-header">
+      <div class="header-content">
+        <div class="header-left">
+          <button
+            nz-button
+            nzType="text"
+            (click)="toggleSidebar()"
+            class="sidebar-toggle"
+          >
+            <span nz-icon nzType="menu"></span>
+          </button>
+          <button
+            nz-button
+            nzType="text"
+            (click)="goHome()"
+            class="home-btn"
+            style="margin-left: 4px"
+          >
+            <span nz-icon nzType="home"></span>
+          </button>
+
+          <nz-breadcrumb class="breadcrumb">
+            <nz-breadcrumb-item>
+              <span>Dashboard</span>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item *ngIf="userRole">
+              {{ userRole }}
+            </nz-breadcrumb-item>
+          </nz-breadcrumb>
+        </div>
+
+        <div class="header-right">
+          <nz-badge [nzCount]="3" class="notification-badge">
+            <button nz-button nzType="text" class="notification-btn">
+              <span nz-icon nzType="bell"></span>
+            </button>
+          </nz-badge>
+
+          <div class="user-menu-trigger" (click)="onProfile()">
+            <nz-avatar nzSize="small" nzIcon="user"></nz-avatar>
+            <span class="user-name">{{ userName }}</span>
+            <span nz-icon nzType="user"></span>
+          </div>
+          <button
+            nz-button
+            nzType="text"
+            (click)="onLogout()"
+            class="logout-btn"
+          >
+            <span nz-icon nzType="logout"></span>
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </nz-header>
+    <nz-content class="dashboard-content">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
