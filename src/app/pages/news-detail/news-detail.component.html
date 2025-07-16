@@ -21,6 +21,10 @@
           <span nz-icon nzType="folder"></span>
           {{ newsDetail?.categoryName }}
         </span>
+        <span class="news-views">
+          <span nz-icon nzType="eye"></span>
+          {{ newsDetail?.viewCount || 0 }} lượt xem
+        </span>
       </div>
     </div>
 

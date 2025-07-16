@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-  private tokenKey = environment.tokenKey;
+  private tokenKey = 'jwt_token';
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient) {}

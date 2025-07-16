@@ -11,7 +11,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { JournalistDashboardComponent } from './pages/journalist/journalist-dashboard/journalist-dashboard.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { CreateNewsComponent } from './shared/components/create-news/create-news.component';
+import { CreateNewsComponent } from './pages/journalist/create-news/create-news.component';
+import { MyNewsComponent } from './pages/journalist/my-news/my-news.component';
 
 export const routes: Routes = [
   {
@@ -35,7 +36,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: JournalistDashboardComponent },
-      { path: 'my-news', component: JournalistDashboardComponent }, // Placeholder
+      { path: 'my-news', component: MyNewsComponent }, // Placeholder
       { path: 'create-news', component: CreateNewsComponent },
       { path: 'drafts', component: JournalistDashboardComponent }, // Placeholder
       { path: 'statistics', component: JournalistDashboardComponent }, // Placeholder

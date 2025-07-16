@@ -20,4 +20,5 @@ export interface NewsResponseDTO {
   categoryId: number;
   categoryName: string;
   tags: TagResponseDTO[];
+  viewCount: number; // số lượt xem
 }

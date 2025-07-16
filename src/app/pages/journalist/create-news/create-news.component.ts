@@ -15,6 +15,8 @@ import { NewsService } from '../../../services/news.service';
 import { NewsCreateDTO } from '../../../models/news-create.dto';
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../../environments/environment';
+import { CategoryService } from '../../../services/category.service';
+import { TagService } from '../../../services/tag.service';
 
 @Component({
   selector: 'app-create-news',
@@ -42,30 +44,25 @@ export class CreateNewsComponent implements OnInit {
   selectedImageFile: File | null = null;
   imageUploading = false;
 
-  // Dummy data for select (cần thay bằng API thực tế)
-  categories = [
-    { id: 1, name: 'Thời sự' },
-    { id: 2, name: 'Kinh tế' },
-    { id: 3, name: 'Thể thao' },
-  ];
-  tags = [
-    { id: 1, name: 'Nóng' },
-    { id: 2, name: 'Tin mới' },
-    { id: 3, name: 'Phân tích' },
-  ];
+  categories: any[] = [];
+  tags: any[] = [];
+  categoriesLoading = false;
+  tagsLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private newsService: NewsService,
     private message: NzMessageService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private categoryService: CategoryService,
+    private tagService: TagService
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required]],
       description: ['', [Validators.required]],
       imageUrl: [''], // không required nữa
       categoryId: [null, [Validators.required]],
-      tagIds: [[], [Validators.required]],
+      tagIds: [[]], // không required nữa
       content: ['', [Validators.required]],
     });
 
@@ -79,10 +76,42 @@ export class CreateNewsComponent implements OnInit {
 
   ngOnInit() {
     this.authorId = this.getAuthorIdFromToken();
+    this.fetchCategories();
+    this.fetchTags();
     // CKEditor custom upload adapter
     if (typeof window !== 'undefined') {
       (window as any).CustomUploadAdapter = this.makeCustomUploadAdapter();
     }
+  }
+
+  fetchCategories() {
+    this.categoriesLoading = true;
+    this.categoryService.getAllCategories().subscribe({
+      next: (data) => {
+        this.categories = data.data;
+        this.categoriesLoading = false;
+      },
+      error: () => {
+        this.categories = [];
+        this.categoriesLoading = false;
+        this.message.error('Không lấy được danh sách chuyên mục');
+      },
+    });
+  }
+
+  fetchTags() {
+    this.tagsLoading = true;
+    this.tagService.getAllTags().subscribe({
+      next: (data) => {
+        this.tags = data.data;
+        this.tagsLoading = false;
+      },
+      error: () => {
+        this.tags = [];
+        this.tagsLoading = false;
+        this.message.error('Không lấy được danh sách tag');
+      },
+    });
   }
 
   getAuthorIdFromToken(): string {
@@ -101,26 +130,22 @@ export class CreateNewsComponent implements OnInit {
   nextStep() {
     const titleInvalid = this.form.get('title')?.invalid;
     const descriptionInvalid = this.form.get('description')?.invalid;
-    const imageUrlInvalid = this.form.get('imageUrl')?.invalid;
+    const imageUrlInvalid = !this.selectedImageFile && !this.imagePreviewUrl;
     const categoryIdInvalid =
       this.form.get('categoryId')?.invalid ||
       !this.form.get('categoryId')?.value;
-    const tagIdsValue = this.form.get('tagIds')?.value;
-    const tagIdsInvalid =
-      !tagIdsValue || !Array.isArray(tagIdsValue) || tagIdsValue.length === 0;
+    // tagIds không còn required
 
     if (
       titleInvalid ||
       descriptionInvalid ||
       imageUrlInvalid ||
-      categoryIdInvalid ||
-      tagIdsInvalid
+      categoryIdInvalid
     ) {
       this.form.get('title')?.markAsTouched();
       this.form.get('description')?.markAsTouched();
       this.form.get('imageUrl')?.markAsTouched();
       this.form.get('categoryId')?.markAsTouched();
-      this.form.get('tagIds')?.markAsTouched();
       return;
     }
     this.step = 2;
@@ -140,13 +165,33 @@ export class CreateNewsComponent implements OnInit {
         const presign = await this.newsService
           .getPresignedUrl(file.name, file.type)
           .toPromise();
-        if (!presign?.url) throw new Error('Không lấy được presigned url');
-        await this.newsService.uploadFileToS3(presign.url, file).toPromise();
-        imageUrl = `https://your-bucket.s3.amazonaws.com/${presign.key}`;
+        if (!presign?.presignedUrl)
+          throw new Error('Không lấy được presigned url');
+        await this.newsService
+          .uploadFileToS3(presign.presignedUrl, file)
+          .toPromise();
+        imageUrl = `https://sc-files-storage.s3.amazonaws.com/${presign.fileKey}`;
+      }
+      // Deferred upload cho ảnh trong content
+      let content = this.form.value.content;
+      for (const img of this.pendingImages) {
+        if (content.includes(img.blobUrl)) {
+          const presign = await this.newsService
+            .getPresignedUrl(img.file.name, img.file.type)
+            .toPromise();
+          if (!presign?.presignedUrl)
+            throw new Error('Không lấy được presigned url');
+          await this.newsService
+            .uploadFileToS3(presign.presignedUrl, img.file)
+            .toPromise();
+          const realUrl = `https://sc-files-storage.s3.amazonaws.com/${presign.fileKey}`;
+          content = content.replaceAll(img.blobUrl, realUrl);
+        }
       }
       const dto: NewsCreateDTO = {
         ...this.form.value,
         imageUrl,
+        content, // content đã thay thế url
         isActive: false, // luôn là false khi tạo mới
         authorId: this.authorId,
       };
@@ -156,6 +201,7 @@ export class CreateNewsComponent implements OnInit {
       this.step = 1;
       this.imagePreviewUrl = null;
       this.selectedImageFile = null;
+      this.pendingImages = [];
       this.newsCreated.emit();
     } catch (err) {
       this.message.error('Tạo tin tức thất bại!');
@@ -174,28 +220,17 @@ export class CreateNewsComponent implements OnInit {
     this.form.patchValue({ imageUrl: '' }); // reset giá trị để validate lại
   }
 
+  pendingImages: { file: File; blobUrl: string }[] = [];
+
   makeCustomUploadAdapter() {
-    const newsService = this.newsService;
+    const pendingImages = this.pendingImages;
     return function (loader: any) {
       return {
         upload: async () => {
-          return new Promise(async (resolve, reject) => {
-            try {
-              const file = await loader.file;
-              // Lấy presigned url
-              const presign = await newsService
-                .getPresignedUrl(file.name, file.type)
-                .toPromise();
-              if (!presign?.url)
-                throw new Error('Không lấy được presigned url');
-              await newsService.uploadFileToS3(presign.url, file).toPromise();
-              // Link public: presign.key hoặc build từ key tuỳ cấu hình S3
-              const publicUrl = `https://your-bucket.s3.amazonaws.com/${presign.key}`;
-              resolve({ default: publicUrl });
-            } catch (err) {
-              reject(err);
-            }
-          });
+          const file = await loader.file;
+          const blobUrl = URL.createObjectURL(file);
+          pendingImages.push({ file, blobUrl });
+          return { default: blobUrl };
         },
       };
     };

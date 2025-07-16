@@ -130,12 +130,6 @@ export class SidebarComponent implements OnInit {
             route: '/journalist/drafts',
           },
           {
-            key: 'statistics',
-            label: 'Thống kê',
-            icon: 'bar-chart',
-            route: '/journalist/statistics',
-          },
-          {
             key: 'profile',
             label: 'Hồ sơ cá nhân',
             icon: 'user',

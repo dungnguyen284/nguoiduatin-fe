@@ -13,19 +13,53 @@ export class NewsService {
 
   constructor(private http: HttpClient) {}
 
-  getAllNews(): Observable<NewsResponseDTO[]> {
-    return this.http.get<NewsResponseDTO[]>(`${this.apiUrl}/api/News`);
-  }
-
-  getNewsByCategory(categoryId: string): Observable<NewsResponseDTO[]> {
+  getAllNews(includeInactive: boolean): Observable<NewsResponseDTO[]> {
+    if (includeInactive) {
+      return this.http.get<NewsResponseDTO[]>(`${this.apiUrl}/api/News`);
+    }
     return this.http.get<NewsResponseDTO[]>(
-      `${this.apiUrl}/api/News?$filter=categoryId eq ${categoryId}`
+      `${this.apiUrl}/api/News?$filter=IsActive eq true`
     );
   }
 
-  getTopLatestNews(count: number): Observable<NewsResponseDTO[]> {
+  getNewsByAuthor(
+    authorId: string,
+    skip: number,
+    top: number,
+    includeInactive: boolean = false
+  ): Observable<NewsResponseDTO[]> {
+    let filter = `authorId eq '${authorId}'`;
+    if (!includeInactive) {
+      filter += ' and IsActive eq true';
+    }
     return this.http.get<NewsResponseDTO[]>(
-      `${this.apiUrl}/api/News?$orderby=PublicationDate desc&$top=${count}`
+      `${this.apiUrl}/api/News?$filter=${filter}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
+    );
+  }
+
+  getNewsByCategory(
+    categoryId: string,
+    includeInactive: boolean = false
+  ): Observable<NewsResponseDTO[]> {
+    let filter = `categoryId eq ${categoryId}`;
+    if (!includeInactive) {
+      filter += ' and IsActive eq true';
+    }
+    return this.http.get<NewsResponseDTO[]>(
+      `${this.apiUrl}/api/News?$filter=${filter}`
+    );
+  }
+
+  getTopLatestNews(
+    count: number,
+    includeInactive: boolean = false
+  ): Observable<NewsResponseDTO[]> {
+    let filter = '';
+    if (!includeInactive) {
+      filter = '$filter=IsActive eq true&';
+    }
+    return this.http.get<NewsResponseDTO[]>(
+      `${this.apiUrl}/api/News?${filter}$orderby=PublicationDate desc&$top=${count}`
     );
   }
 
@@ -33,25 +67,45 @@ export class NewsService {
     return this.http.get<any>(`${this.apiUrl}/api/News/${id}`);
   }
 
-  searchNewsByTitle(keyword: string): Observable<NewsResponseDTO[]> {
+  searchNewsByTitle(
+    keyword: string,
+    includeInactive: boolean = false
+  ): Observable<NewsResponseDTO[]> {
+    let filter = `contains(title,'${keyword}')`;
+    if (!includeInactive) {
+      filter += ' and IsActive eq true';
+    }
     return this.http.get<NewsResponseDTO[]>(
-      `${this.apiUrl}/api/News?$filter=contains(title,'${keyword}')`
+      `${this.apiUrl}/api/News?$filter=${filter}`
     );
   }
 
-  getNewsPaged(skip: number, top: number): Observable<NewsResponseDTO[]> {
+  getNewsPaged(
+    skip: number,
+    top: number,
+    includeInactive: boolean = false
+  ): Observable<NewsResponseDTO[]> {
+    let filter = '';
+    if (!includeInactive) {
+      filter = '$filter=IsActive eq true&';
+    }
     return this.http.get<NewsResponseDTO[]>(
-      `${this.apiUrl}/api/News?$orderby=SlotNumber desc,PublicationDate desc&$skip=${skip}&$top=${top}`
+      `${this.apiUrl}/api/News?${filter}$orderby=SlotNumber desc,PublicationDate desc&$skip=${skip}&$top=${top}`
     );
   }
 
   getNewsByCategoryPaged(
     categoryId: string,
     skip: number,
-    top: number
+    top: number,
+    includeInactive: boolean = false
   ): Observable<NewsResponseDTO[]> {
+    let filter = `categoryId eq ${categoryId}`;
+    if (!includeInactive) {
+      filter += ' and IsActive eq true';
+    }
     return this.http.get<NewsResponseDTO[]>(
-      `${this.apiUrl}/api/News?$filter=categoryId eq ${categoryId}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
+      `${this.apiUrl}/api/News?$filter=${filter}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
     );
   }
 
@@ -61,13 +115,14 @@ export class NewsService {
       ...news,
       isActive: false,
       link: '',
+      source: 'Người Đưa Tin',
     };
     return this.http.post(`${this.apiUrl}/api/news`, payload);
   }
 
   getPresignedUrl(fileName: string, fileType: string) {
-    return this.http.get<{ url: string; key: string }>(
-      `${environment.presignApiUrl}?fileName=${encodeURIComponent(
+    return this.http.get<{ presignedUrl: string; fileKey: string }>(
+      `${environment.presignApiUrl}/upload-url?fileName=${encodeURIComponent(
         fileName
       )}&fileType=${encodeURIComponent(fileType)}`
     );
@@ -75,7 +130,9 @@ export class NewsService {
 
   uploadFileToS3(presignedUrl: string, file: File) {
     return this.http.put(presignedUrl, file, {
-      headers: { 'Content-Type': file.type },
+      headers: {
+        'Content-Type': file.type,
+      },
       reportProgress: true,
       observe: 'events',
     });
