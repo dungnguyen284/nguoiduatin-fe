@@ -63,17 +63,23 @@
       <!-- Available News Section -->
       <div class="section">
         <h3>Tin khả dụng</h3>
-        
+
         <!-- Thêm ô tìm kiếm -->
         <div class="search-container">
           <nz-input-group [nzSuffix]="suffixIconSearch">
-            <input type="text" nz-input placeholder="Tìm kiếm tin tức" [(ngModel)]="searchText" (keyup)="onSearch(searchText)">
+            <input
+              type="text"
+              nz-input
+              placeholder="Tìm kiếm tin tức"
+              [(ngModel)]="searchText"
+              (keyup)="onSearch(searchText)"
+            />
           </nz-input-group>
           <ng-template #suffixIconSearch>
             <span nz-icon nzType="search"></span>
           </ng-template>
         </div>
-        
+
         <div class="available-news-container">
           <div *ngIf="filteredAvailableNews.length === 0" class="empty-message">
             Không có tin khả dụng
@@ -85,7 +91,9 @@
                 <img [src]="news.imageUrl" [alt]="news.title" />
               </div>
               <div class="info">
-                <h4 class="title" nz-tooltip [nzTooltipTitle]="news.title">{{ news.title }}</h4>
+                <h4 class="title" nz-tooltip [nzTooltipTitle]="news.title">
+                  {{ news.title }}
+                </h4>
                 <p class="date">{{ formatDate(news.publicationDate) }}</p>
                 <p class="category">{{ news.categoryName }}</p>
               </div>
