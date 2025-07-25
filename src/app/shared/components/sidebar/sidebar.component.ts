@@ -41,7 +41,7 @@ export class SidebarComponent implements OnInit {
   @Input() isCollapsed = false;
   menuItems: SidebarMenuItem[] = [];
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(public router: Router, private authService: AuthService) {}
 
   ngOnInit() {
     this.setupMenuItems();
@@ -75,24 +75,42 @@ export class SidebarComponent implements OnInit {
                 route: '/admin/news',
               },
               {
-                key: 'pending-news',
-                label: 'Tin chờ duyệt',
-                icon: 'clock-circle',
-                route: '/admin/news/pending',
+                key: 'feature-news',
+                label: 'Tin hàng đầu',
+                icon: 'star',
+                route: '/admin/news/feature',
               },
-              {
-                key: 'rejected-news',
-                label: 'Tin bị từ chối',
-                icon: 'close-circle',
-                route: '/admin/news/rejected',
-              },
+              // {
+              //   key: 'pending-news',
+              //   label: 'Tin chờ duyệt',
+              //   icon: 'clock-circle',
+              //   route: '/admin/news/pending',
+              // },
+              // {
+              //   key: 'rejected-news',
+              //   label: 'Tin bị từ chối',
+              //   icon: 'close-circle',
+              //   route: '/admin/news/rejected',
+              // },
             ],
           },
+          // {
+          //   key: 'categories',
+          //   label: 'Quản lý danh mục',
+          //   icon: 'folder',
+          //   route: '/admin/categories',
+          // },
           {
-            key: 'categories',
-            label: 'Quản lý danh mục',
-            icon: 'folder',
-            route: '/admin/categories',
+            key: 'tags',
+            label: 'Quản lý tag',
+            icon: 'tags',
+            route: '/admin/tags',
+          },
+          {
+            key: 'stocks',
+            label: 'Quản lý cổ phiếu',
+            icon: 'stock',
+            route: '/admin/stocks',
           },
           {
             key: 'settings',
@@ -153,6 +171,7 @@ export class SidebarComponent implements OnInit {
 
   onMenuClick(item: SidebarMenuItem) {
     if (item.route) {
+      console.log('Navigating to:', item.route);
       this.router.navigate([item.route]);
     }
   }

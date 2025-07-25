@@ -1,0 +1,138 @@
+<div class="news-management-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      Quản lý tin tức
+      <span *ngIf="authorName" class="author-filter"
+        >của nhà báo: {{ authorName }}</span
+      >
+    </h1>
+
+    <button nz-button nzType="primary" (click)="openFeatureNewsManagement()">
+      <span nz-icon nzType="star" nzTheme="fill"></span>
+      Quản lý tin hàng đầu
+    </button>
+  </div>
+
+  <div class="filters">
+    <div>
+      <span>Trạng thái: </span>
+      <nz-select
+        [(ngModel)]="selectedStatusFilter"
+        [nzMode]="'multiple'"
+        (ngModelChange)="onStatusFilterChange()"
+        style="min-width: 200px"
+      >
+        <nz-option
+          *ngFor="let option of statusFilters"
+          [nzValue]="option.value"
+          [nzLabel]="option.text"
+        >
+        </nz-option>
+      </nz-select>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <nz-table
+      #newsTable
+      [nzData]="newsList"
+      [nzLoading]="loading"
+      [nzPageSize]="pageSize"
+      [nzTotal]="totalItems"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)"
+      [nzShowSizeChanger]="true"
+      [nzPageSizeOptions]="[10, 20, 50]"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+      [nzFrontPagination]="false"
+      [nzShowTotal]="totalTemplate"
+    >
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tiêu đề</th>
+          <th>Chuyên mục</th>
+          <th>Tác giả</th>
+          <th>Ngày đăng</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let news of newsTable.data">
+          <td>{{ news.id }}</td>
+          <td>
+            <a
+              class="news-title"
+              [routerLink]="['/news', news.id]"
+              target="_blank"
+              nz-tooltip
+              [nzTooltipTitle]="news.title"
+            >
+              <div class="ellipsis">{{ news.title }}</div>
+            </a>
+          </td>
+          <td>{{ news.categoryName }}</td>
+          <td>{{ news.authorName || "Không có" }}</td>
+          <td>{{ formatDate(news.publicationDate) }}</td>
+          <td>
+            <nz-tag [nzColor]="getStatusColor(news.status)">
+              {{ getStatusText(news.status) }}
+            </nz-tag>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                *ngIf="news.status !== 0"
+                (click)="publishNews(news.id.toString())"
+              >
+                <span nz-icon nzType="check-circle"></span>Đăng
+              </button>
+
+              <button
+                nz-button
+                nzType="default"
+                nzSize="small"
+                *ngIf="news.status === 0"
+                (click)="hideNews(news.id.toString())"
+              >
+                <span nz-icon nzType="eye-invisible"></span>Ẩn
+              </button>
+
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                [routerLink]="['/journalist/edit-news', news.id]"
+              >
+                <span nz-icon nzType="edit"></span>Sửa
+              </button>
+
+              <!-- <button
+                nz-button
+                nzType="default"
+                nzDanger
+                nzSize="small"
+                (click)="deleteNews(news.id.toString())"
+              >
+                <span nz-icon nzType="delete"></span>Xóa
+              </button> -->
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="empty-data" *ngIf="!loading && newsList.length === 0">
+      Không có dữ liệu tin tức
+    </div>
+  </div>
+  
+  <ng-template #totalTemplate let-total>
+    Tổng cộng {{ total }} tin tức
+  </ng-template>
+</div>

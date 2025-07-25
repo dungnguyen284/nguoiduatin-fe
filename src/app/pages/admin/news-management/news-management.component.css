@@ -1,0 +1,66 @@
+.news-management-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.author-filter {
+  font-size: 18px;
+  color: #1890ff;
+  margin-left: 10px;
+}
+
+.filters {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.ellipsis {
+  max-width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.news-title {
+  cursor: pointer;
+  color: #1890ff;
+}
+
+.news-title:hover {
+  text-decoration: underline;
+}
+
+.empty-data {
+  text-align: center;
+  padding: 32px 0;
+  color: rgba(0, 0, 0, 0.45);
+}

@@ -124,8 +124,18 @@
       nzType="primary"
       [disabled]="form.get('content')?.invalid || isLoading"
       [nzLoading]="isLoading"
+      (click)="submit()"
     >
       Đăng tin
+    </button>
+    <button
+      nz-button
+      nzType="default"
+      [disabled]="form.get('content')?.invalid || isLoading"
+      (click)="saveDraft()"
+      style="margin-left: 12px"
+    >
+      Lưu nháp
     </button>
   </ng-container>
 </form>

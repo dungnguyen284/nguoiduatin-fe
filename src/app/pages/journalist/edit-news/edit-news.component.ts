@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -14,12 +14,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NewsService } from '../../../services/news.service';
 import { NewsCreateDTO } from '../../../models/news-create.dto';
 import { DomSanitizer } from '@angular/platform-browser';
-import { environment } from '../../../../environments/environment';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../services/category.service';
 import { TagService } from '../../../services/tag.service';
 
 @Component({
-  selector: 'app-create-news',
+  selector: 'app-edit-news',
   standalone: true,
   imports: [
     CommonModule,
@@ -29,25 +29,22 @@ import { TagService } from '../../../services/tag.service';
     NzButtonModule,
     NzSelectModule,
   ],
-  templateUrl: './create-news.component.html',
-  styleUrl: './create-news.component.css',
+  templateUrl: './edit-news.component.html',
+  styleUrl: './edit-news.component.css',
 })
-export class CreateNewsComponent implements OnInit {
-  @Output() newsCreated = new EventEmitter<void>();
-
+export class EditNewsComponent implements OnInit {
   form: FormGroup;
   editor: any = null;
   isLoading = false;
-  step = 1;
-  authorId: string = '';
+  newsId: string = '';
   imagePreviewUrl: string | null = null;
   selectedImageFile: File | null = null;
   imageUploading = false;
-
   categories: any[] = [];
   tags: any[] = [];
   categoriesLoading = false;
   tagsLoading = false;
+  pendingImages: { file: File; blobUrl: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -55,18 +52,18 @@ export class CreateNewsComponent implements OnInit {
     private message: NzMessageService,
     private sanitizer: DomSanitizer,
     private categoryService: CategoryService,
-    private tagService: TagService
+    private tagService: TagService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      imageUrl: [''], // không required nữa
+      imageUrl: [''],
       categoryId: [null, [Validators.required]],
-      tagIds: [[]], // không required nữa
+      tagIds: [[]],
       content: ['', [Validators.required]],
     });
-
-    // Dynamic import CKEditor chỉ khi có window (client-side)
     if (typeof window !== 'undefined') {
       import('@ckeditor/ckeditor5-build-classic').then((module) => {
         this.editor = module.default;
@@ -75,10 +72,12 @@ export class CreateNewsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authorId = this.getAuthorIdFromToken();
+    this.newsId = this.route.snapshot.paramMap.get('id') || '';
     this.fetchCategories();
     this.fetchTags();
-    // CKEditor custom upload adapter
+    if (this.newsId) {
+      this.loadDraft(this.newsId);
+    }
     if (typeof window !== 'undefined') {
       (window as any).CustomUploadAdapter = this.makeCustomUploadAdapter();
     }
@@ -114,41 +113,29 @@ export class CreateNewsComponent implements OnInit {
     });
   }
 
-  getAuthorIdFromToken(): string {
-    const token =
-      sessionStorage.getItem('jwt_token') || localStorage.getItem('jwt_token');
-    if (!token) return '';
-    try {
-      const payload = token.split('.')[1];
-      const decoded = JSON.parse(atob(payload));
-      return decoded['nameidentifier'] || decoded['sub'] || '';
-    } catch {
-      return '';
-    }
-  }
-
-  nextStep() {
-    const titleInvalid = this.form.get('title')?.invalid;
-    const descriptionInvalid = this.form.get('description')?.invalid;
-    const imageUrlInvalid = !this.selectedImageFile && !this.imagePreviewUrl;
-    const categoryIdInvalid =
-      this.form.get('categoryId')?.invalid ||
-      !this.form.get('categoryId')?.value;
-    // tagIds không còn required
-
-    if (
-      titleInvalid ||
-      descriptionInvalid ||
-      imageUrlInvalid ||
-      categoryIdInvalid
-    ) {
-      this.form.get('title')?.markAsTouched();
-      this.form.get('description')?.markAsTouched();
-      this.form.get('imageUrl')?.markAsTouched();
-      this.form.get('categoryId')?.markAsTouched();
-      return;
-    }
-    this.step = 2;
+  loadDraft(id: string) {
+    this.isLoading = true;
+    this.newsService.getNewsById(id).subscribe({
+      next: (res) => {
+        const news = res.data || res;
+        this.form.patchValue({
+          title: news.title,
+          description: news.description,
+          imageUrl: news.imageUrl,
+          categoryId: news.categoryId,
+          tagIds: news.tags?.map((t: any) => t.id) || [],
+          content: news.content,
+        });
+        if (news.imageUrl) {
+          this.imagePreviewUrl = news.imageUrl;
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.message.error('Không lấy được dữ liệu nháp');
+        this.isLoading = false;
+      },
+    });
   }
 
   async submit() {
@@ -159,7 +146,6 @@ export class CreateNewsComponent implements OnInit {
     this.isLoading = true;
     try {
       let imageUrl = this.form.value.imageUrl;
-      // Nếu có file ảnh bìa, upload lên S3 trước khi gửi bài
       if (this.selectedImageFile) {
         const file = this.selectedImageFile;
         const presign = await this.newsService
@@ -172,7 +158,6 @@ export class CreateNewsComponent implements OnInit {
           .toPromise();
         imageUrl = `https://sc-files-storage.s3.amazonaws.com/${presign.fileKey}`;
       }
-      // Deferred upload cho ảnh trong content
       let content = this.form.value.content;
       for (const img of this.pendingImages) {
         if (content.includes(img.blobUrl)) {
@@ -191,20 +176,15 @@ export class CreateNewsComponent implements OnInit {
       const dto: NewsCreateDTO = {
         ...this.form.value,
         imageUrl,
-        content, // content đã thay thế url
-        status: 1, // INACTIVE khi đăng
-        authorId: this.authorId,
+        content,
+        status: 1, // ACTIVE khi đăng
+        // giữ lại các trường khác nếu cần
       };
-      await this.newsService.createNews(dto).toPromise();
-      this.message.success('Tạo tin tức thành công!');
-      this.form.reset();
-      this.step = 1;
-      this.imagePreviewUrl = null;
-      this.selectedImageFile = null;
-      this.pendingImages = [];
-      this.newsCreated.emit();
+      await this.newsService.editNews(this.newsId, dto).toPromise();
+      this.message.success('Cập nhật và đăng tin thành công!');
+      this.router.navigate(['/journalist/my-news']);
     } catch (err) {
-      this.message.error('Tạo tin tức thất bại!');
+      this.message.error('Cập nhật tin thất bại!');
     } finally {
       this.isLoading = false;
     }
@@ -218,7 +198,6 @@ export class CreateNewsComponent implements OnInit {
     this.isLoading = true;
     try {
       let imageUrl = this.form.value.imageUrl;
-      // Nếu có file ảnh bìa, upload lên S3 trước khi gửi bài
       if (this.selectedImageFile) {
         const file = this.selectedImageFile;
         const presign = await this.newsService
@@ -231,7 +210,6 @@ export class CreateNewsComponent implements OnInit {
           .toPromise();
         imageUrl = `https://sc-files-storage.s3.amazonaws.com/${presign.fileKey}`;
       }
-      // Deferred upload cho ảnh trong content
       let content = this.form.value.content;
       for (const img of this.pendingImages) {
         if (content.includes(img.blobUrl)) {
@@ -250,18 +228,12 @@ export class CreateNewsComponent implements OnInit {
       const dto: NewsCreateDTO = {
         ...this.form.value,
         imageUrl,
-        content, // content đã thay thế url
+        content,
         status: 2, // DRAFT khi lưu nháp
-        authorId: this.authorId,
       };
-      await this.newsService.createNews(dto).toPromise();
+      await this.newsService.editNews(this.newsId, dto).toPromise();
       this.message.success('Lưu nháp thành công!');
-      this.form.reset();
-      this.step = 1;
-      this.imagePreviewUrl = null;
-      this.selectedImageFile = null;
-      this.pendingImages = [];
-      this.newsCreated.emit();
+      this.router.navigate(['/journalist/drafts']);
     } catch (err) {
       this.message.error('Lưu nháp thất bại!');
     } finally {
@@ -275,11 +247,8 @@ export class CreateNewsComponent implements OnInit {
     const file = input.files[0];
     this.selectedImageFile = file;
     this.imagePreviewUrl = URL.createObjectURL(file);
-    // Không upload ở đây nữa
-    this.form.patchValue({ imageUrl: '' }); // reset giá trị để validate lại
+    this.form.patchValue({ imageUrl: '' });
   }
-
-  pendingImages: { file: File; blobUrl: string }[] = [];
 
   makeCustomUploadAdapter() {
     const pendingImages = this.pendingImages;
@@ -296,7 +265,6 @@ export class CreateNewsComponent implements OnInit {
   }
 
   onReady(editor: any) {
-    // Gán custom upload adapter cho CKEditor
     editor.plugins.get('FileRepository').createUploadAdapter = (
       loader: any
     ) => {
@@ -304,7 +272,6 @@ export class CreateNewsComponent implements OnInit {
     };
   }
 
-  // Tiện ích cho template
   get f() {
     return this.form.controls;
   }

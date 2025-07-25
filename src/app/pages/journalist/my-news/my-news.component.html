@@ -1,8 +1,30 @@
 <div class="my-news-container">
   <nz-card nzTitle="Tin của tôi">
+    <div class="filter-container">
+      <div class="status-filter">
+        <nz-select [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange()" nzPlaceHolder="Chọn trạng thái">
+          <nz-option *ngFor="let option of statusOptions" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+        </nz-select>
+      </div>
+      <div class="search-container">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            nz-input
+            placeholder="Tìm kiếm theo tiêu đề"
+            [(ngModel)]="searchText"
+            (keyup.enter)="onSearch()"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <span nz-icon nzType="search" (click)="onSearch()"></span>
+        </ng-template>
+      </div>
+    </div>
     <nz-table
       [nzData]="myArticles"
-      [nzPageSize]="10"
+      [nzFrontPagination]="false"
+      [nzLoading]="loading"
       [nzShowPagination]="false"
     >
       <thead>
@@ -21,8 +43,22 @@
           <td>{{ news.categoryName }}</td>
           <td>{{ news.publicationDate | date : "dd/MM/yyyy HH:mm" }}</td>
           <td>
-            <nz-tag [nzColor]="news.isActive ? 'green' : 'orange'">
-              {{ news.isActive ? "Đã xuất bản" : "Chờ duyệt" }}
+            <nz-tag
+              [nzColor]="
+                news.status === 0
+                  ? 'green'
+                  : news.status === 2
+                  ? 'blue'
+                  : 'orange'
+              "
+            >
+              {{
+                news.status === 0
+                  ? "Đã xuất bản"
+                  : news.status === 2
+                  ? "Bản nháp"
+                  : "Chờ duyệt"
+              }}
             </nz-tag>
           </td>
           <td>{{ news.viewCount || 0 }}</td>
@@ -39,15 +75,16 @@
         </tr>
       </tbody>
     </nz-table>
-    <div style="text-align: center; margin-top: 16px" *ngIf="!allLoaded">
-      <button
-        nz-button
-        nzType="default"
-        (click)="loadMyArticles()"
-        [disabled]="loading"
-      >
-        Xem thêm
-      </button>
+    <div class="pagination-container">
+      <nz-pagination
+        [nzPageIndex]="currentPage"
+        [nzPageSize]="pageSize"
+        [nzTotal]="totalItems"
+        [nzShowSizeChanger]="true"
+        [nzPageSizeOptions]="[10, 20, 50]"
+        (nzPageIndexChange)="onPageChange($event)"
+        (nzPageSizeChange)="onPageSizeChange($event)"
+      ></nz-pagination>
     </div>
   </nz-card>
 </div>

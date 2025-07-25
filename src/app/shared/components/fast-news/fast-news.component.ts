@@ -18,6 +18,6 @@ export class FastNewsComponent implements OnInit {
   constructor(private newsService: NewsService) {}
 
   ngOnInit(): void {
-    this.topNews$ = this.newsService.getTopLatestNews(10);
+    this.topNews$ = this.newsService.getTopLatestNews(10, 0);
   }
 }

@@ -5,7 +5,7 @@ export interface NewsCreateDTO {
   imageUrl: string;
   source: string;
   link: string;
-  isActive: boolean; // luôn gửi false khi tạo mới
+  status: number; // 0: ACTIVE, 1: INACTIVE, 2: DRAFT
   authorId: string;
   categoryId: number;
   tagIds: number[];

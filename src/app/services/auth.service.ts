@@ -64,6 +64,10 @@ export class AuthService {
       return null;
     }
   }
+  hasRole(expectedRoles: string[]): boolean {
+    const role = this.getUserRole();
+    return role ? expectedRoles.includes(role) : false;
+  }
 
   getUserId(): string | null {
     const token = this.getToken();

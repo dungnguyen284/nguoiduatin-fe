@@ -222,9 +222,25 @@
     <nz-col [nzSpan]="12">
       <nz-card nzTitle="Thao tác nhanh" class="quick-actions-card">
         <div class="quick-actions">
-          <button nz-button nzType="primary" nzBlock class="action-btn">
-            <span nz-icon nzType="user-add"></span>
-            Thêm người dùng mới
+          <button
+            nz-button
+            nzType="primary"
+            nzBlock
+            class="action-btn"
+            [routerLink]="['/admin/users']"
+          >
+            <span nz-icon nzType="user"></span>
+            Quản lý người dùng
+          </button>
+          <button
+            nz-button
+            nzType="primary"
+            nzBlock
+            class="action-btn"
+            [routerLink]="['/admin/news']"
+          >
+            <span nz-icon nzType="file-text"></span>
+            Quản lý tin tức
           </button>
           <button nz-button nzType="default" nzBlock class="action-btn">
             <span nz-icon nzType="setting"></span>
@@ -233,10 +249,6 @@
           <button nz-button nzType="default" nzBlock class="action-btn">
             <span nz-icon nzType="bar-chart"></span>
             Xem báo cáo
-          </button>
-          <button nz-button nzType="default" nzBlock class="action-btn">
-            <span nz-icon nzType="database"></span>
-            Backup dữ liệu
           </button>
         </div>
       </nz-card>

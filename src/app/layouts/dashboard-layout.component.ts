@@ -67,7 +67,10 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
                 : null;
 
             // Extract user info from token
-            this.userName = decoded?.name || decoded?.sub || 'Người dùng';
+            this.userName =
+              decoded[
+                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
+              ] || 'Người dùng';
             this.userEmail = decoded?.email || 'user@example.com';
           }
         } else {

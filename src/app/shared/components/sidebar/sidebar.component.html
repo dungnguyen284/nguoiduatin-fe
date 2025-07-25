@@ -36,6 +36,7 @@
             *ngFor="let child of item.children"
             (click)="onMenuClick(child)"
             [nzDisabled]="child.disabled"
+            [nzSelected]="router.isActive(child.route || '', false)"
           >
             <span nz-icon [nzType]="child.icon"></span>
             <span>{{ child.label }}</span>

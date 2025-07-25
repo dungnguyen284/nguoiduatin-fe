@@ -13,7 +13,17 @@ import { JournalistDashboardComponent } from './pages/journalist/journalist-dash
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { CreateNewsComponent } from './pages/journalist/create-news/create-news.component';
 import { MyNewsComponent } from './pages/journalist/my-news/my-news.component';
-
+import { DraftNewsComponent } from './pages/journalist/draft-news/draft-news.component';
+import { EditNewsComponent } from './pages/journalist/edit-news/edit-news.component';
+import { NewsManagementComponent } from './pages/admin/news-management/news-management.component';
+import { FeatureNewsManagementComponent } from './pages/admin/news-management/feature-news-management/feature-news-management.component';
+import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
+import { TagManagementComponent } from './pages/admin/tag-management/tag-management.component';
+import { StockManagementComponent } from './pages/admin/stock-management/stock-management.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 export const routes: Routes = [
   {
     path: '',
@@ -33,13 +43,14 @@ export const routes: Routes = [
   {
     path: 'journalist',
     component: DashboardLayoutComponent,
+    canActivate: [authGuard, roleGuard(['Journalist', 'Admin'])],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: JournalistDashboardComponent },
       { path: 'my-news', component: MyNewsComponent }, // Placeholder
       { path: 'create-news', component: CreateNewsComponent },
-      { path: 'drafts', component: JournalistDashboardComponent }, // Placeholder
-      { path: 'statistics', component: JournalistDashboardComponent }, // Placeholder
+      { path: 'edit-news/:id', component: EditNewsComponent },
+      { path: 'drafts', component: DraftNewsComponent }, // Placeholder
       { path: 'profile', component: JournalistDashboardComponent }, // Placeholder
     ],
   },
@@ -47,17 +58,23 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: DashboardLayoutComponent,
+    canActivate: [authGuard, roleGuard(['Admin'])],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'users', component: AdminDashboardComponent }, // Placeholder
-      { path: 'news', component: AdminDashboardComponent }, // Placeholder
+      { path: 'users', component: UserManagementComponent },
+      { path: 'news', component: NewsManagementComponent },
+      { path: 'news/feature', component: FeatureNewsManagementComponent },
       { path: 'news/pending', component: AdminDashboardComponent }, // Placeholder
       { path: 'news/rejected', component: AdminDashboardComponent }, // Placeholder
-      { path: 'categories', component: AdminDashboardComponent }, // Placeholder
-      { path: 'settings', component: AdminDashboardComponent }, // Placeholder
+      { path: 'tags', component: TagManagementComponent }, // Placeholder
+      { path: 'stocks', component: StockManagementComponent }, // Placeholder
     ],
   },
   // Profile route (accessible from header)
   { path: 'profile', component: LoginComponent }, // Placeholder - redirect to login if not authenticated
+
+  // Error pages
+  { path: 'unauthorized', component: UnauthorizedComponent },
+  { path: '**', component: NotFoundComponent }, // Wildcard route for 404 (always keep this last)
 ];

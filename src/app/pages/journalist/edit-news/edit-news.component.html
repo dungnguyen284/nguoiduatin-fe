@@ -1,0 +1,114 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="edit-news-form">
+  <div class="form-row">
+    <label>Tiêu đề</label>
+    <input nz-input formControlName="title" placeholder="Nhập tiêu đề" />
+    <div class="error" *ngIf="f['title'].touched && f['title'].invalid">
+      Vui lòng nhập tiêu đề
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label>Mô tả ngắn</label>
+    <input
+      nz-input
+      formControlName="description"
+      placeholder="Nhập mô tả ngắn"
+    />
+    <div
+      class="error"
+      *ngIf="f['description'].touched && f['description'].invalid"
+    >
+      Vui lòng nhập mô tả
+    </div>
+  </div>
+
+  <div class="form-row cover-image-upload">
+    <label>Ảnh đại diện (file)</label>
+    <label class="cover-image-upload-label">
+      <span nz-icon nzType="upload"></span> Chọn ảnh đại diện
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onImageFileChange($event)"
+        [disabled]="imageUploading"
+      />
+    </label>
+    <div *ngIf="imageUploading" style="color: #1890ff; font-size: 13px">
+      Đang tải ảnh lên...
+    </div>
+    <div *ngIf="imagePreviewUrl" class="cover-image-preview">
+      <img [src]="imagePreviewUrl" alt="Preview" />
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label>Chuyên mục</label>
+    <nz-select
+      formControlName="categoryId"
+      nzPlaceHolder="Chọn chuyên mục"
+      [nzLoading]="categoriesLoading"
+      [disabled]="categoriesLoading"
+    >
+      <nz-option
+        *ngFor="let c of categories"
+        [nzValue]="c.id"
+        [nzLabel]="c.name"
+      ></nz-option>
+    </nz-select>
+    <div
+      class="error"
+      *ngIf="f['categoryId'].touched && f['categoryId'].invalid"
+    >
+      Vui lòng chọn chuyên mục
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label>Tag</label>
+    <nz-select
+      formControlName="tagIds"
+      nzMode="multiple"
+      nzPlaceHolder="Chọn tag"
+      [nzLoading]="tagsLoading"
+      [disabled]="tagsLoading"
+    >
+      <nz-option
+        *ngFor="let t of tags"
+        [nzValue]="t.id"
+        [nzLabel]="t.name"
+      ></nz-option>
+    </nz-select>
+  </div>
+
+  <div class="form-row wide-content-row">
+    <label>Nội dung</label>
+    <ckeditor
+      *ngIf="editor"
+      [editor]="editor"
+      formControlName="content"
+      (ready)="onReady($event)"
+    ></ckeditor>
+    <div class="error" *ngIf="f['content'].touched && f['content'].invalid">
+      Vui lòng nhập nội dung
+    </div>
+  </div>
+
+  <button
+    nz-button
+    nzType="primary"
+    [disabled]="form.get('content')?.invalid || isLoading"
+    [nzLoading]="isLoading"
+    (click)="submit()"
+  >
+    Đăng tin
+  </button>
+  <button
+    nz-button
+    nzType="default"
+    [disabled]="form.get('content')?.invalid || isLoading"
+    (click)="saveDraft()"
+    style="margin-left: 12px"
+  >
+    Lưu nháp
+  </button>
+</form>

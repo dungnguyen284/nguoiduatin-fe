@@ -1,0 +1,72 @@
+.edit-news-form {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.form-row {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 2px;
+}
+ckeditor {
+  min-height: 200px;
+  margin-bottom: 8px;
+}
+button[nz-button] {
+  min-width: 120px;
+}
+.wide-content-row {
+  max-width: 100%;
+}
+.wide-content-row ckeditor {
+  min-height: 350px;
+  width: 100%;
+}
+.cover-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.cover-image-upload-label {
+  display: inline-block;
+  padding: 8px 20px;
+  background: #1890ff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+.cover-image-upload-label:hover {
+  background: #40a9ff;
+}
+.cover-image-upload input[type="file"] {
+  display: none;
+}
+.cover-image-preview {
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  max-width: 240px;
+  max-height: 150px;
+}
+.cover-image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

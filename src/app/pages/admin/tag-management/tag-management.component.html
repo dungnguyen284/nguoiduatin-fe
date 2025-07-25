@@ -1,0 +1,90 @@
+<div class="tag-management-container">
+  <h1 class="page-title">Quản lý Tag</h1>
+
+  <div class="table-operations">
+    <div>
+      <input nz-input placeholder="Tìm kiếm tag" class="search-input" />
+    </div>
+    <button nz-button nzType="primary" (click)="openAddTagModal()">
+      <span nz-icon nzType="plus"></span>Thêm tag mới
+    </button>
+  </div>
+
+  <div class="table-container">
+    <nz-table
+      #tagsTable
+      [nzData]="tags"
+      [nzLoading]="loading"
+      [nzPageSize]="pageSize"
+      [nzTotal]="totalItems"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)"
+      [nzShowSizeChanger]="false"
+    >
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên Tag</th>
+          <th>Số bài viết</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let tag of tagsTable.data">
+          <td>{{ tag.id }}</td>
+          <td>{{ tag.name }}</td>
+          <td>
+            <span class="tag-count">{{ tag.newsCount }}</span>
+          </td>
+
+          <td>
+            <div class="action-buttons">
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                (click)="openEditTagModal(tag)"
+              >
+                <span nz-icon nzType="edit"></span>
+              </button>
+
+              <button
+                nz-button
+                nzType="default"
+                nzDanger
+                nzSize="small"
+                [disabled]="tag.newsCount > 0"
+                title="Tag có bài viết không thể xóa"
+                (click)="deleteTag(tag)"
+              >
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="empty-data" *ngIf="!loading && tags.length === 0">
+      Không có dữ liệu tag
+    </div>
+  </div>
+</div>
+
+<!-- Modal thêm/sửa tag -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="modalTitle"
+  (nzOnCancel)="cancelModal()"
+  (nzOnOk)="saveTag()"
+  [nzOkText]="'Lưu'"
+  [nzCancelText]="'Hủy'"
+>
+  <ng-container *nzModalContent>
+    <div style="margin-bottom: 16px">
+      <label style="display: block; margin-bottom: 8px">Tên Tag:</label>
+      <input nz-input [(ngModel)]="newTagName" placeholder="Nhập tên tag" />
+    </div>
+  </ng-container>
+</nz-modal>

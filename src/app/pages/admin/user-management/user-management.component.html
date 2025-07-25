@@ -1,0 +1,175 @@
+<div class="user-management-container">
+  <h1 class="page-title">Quản lý người dùng</h1>
+
+  <div class="table-operations">
+    <div class="search-box">
+      <!-- Có thể thêm ô tìm kiếm ở đây -->
+    </div>
+    <!-- <button nz-button nzType="primary" (click)="openAddUserModal()">
+      <span nz-icon nzType="user-add"></span>Thêm người dùng
+    </button> -->
+  </div>
+
+  <div class="table-container">
+    <nz-table
+      #usersTable
+      [nzData]="users"
+      [nzLoading]="loading"
+      [nzPageSize]="pageSize"
+      [nzTotal]="totalItems"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)"
+      [nzShowSizeChanger]="false"
+    >
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên người dùng</th>
+          <th>Email</th>
+          <th>Họ tên</th>
+          <th>Vai trò</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let user of usersTable.data">
+          <td>{{ user.id }}</td>
+          <td>{{ user.userName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.fullName }}</td>
+          <td>
+            <nz-tag [nzColor]="getRoleColor(user.role)">
+              {{ user.role }}
+            </nz-tag>
+          </td>
+
+          <td>
+            <div class="action-buttons">
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                (click)="openEditUserModal(user)"
+                nzTooltip="Chỉnh sửa thông tin"
+              >
+                <span nz-icon nzType="edit"></span>
+              </button>
+
+              <button
+                *ngIf="user.role === 'Journalist'"
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                [routerLink]="['/admin/news']"
+                [queryParams]="{authorId: user.id}"
+                nzTooltip="Quản lý tin tức của nhà báo này"
+              >
+                <span nz-icon nzType="file-text"></span>
+              </button>
+
+              <!-- <button
+                nz-button
+                [nzType]="user.status === 1 ? 'default' : 'primary'"
+                [nzDanger]="user.status === 1"
+                nzSize="small"
+                (click)="toggleUserStatus(user)"
+              >
+                <span
+                  nz-icon
+                  [nzType]="user.status === 1 ? 'lock' : 'unlock'"
+                ></span> -->
+              <!-- </button> -->
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="empty-data" *ngIf="!loading && users.length === 0">
+      Không có dữ liệu người dùng
+    </div>
+  </div>
+</div>
+
+<!-- Modal thêm/sửa người dùng -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="modalTitle"
+  (nzOnCancel)="cancelModal()"
+  (nzOnOk)="saveUser()"
+  [nzOkText]="'Lưu'"
+  [nzCancelText]="'Hủy'"
+>
+  <ng-container *nzModalContent>
+    <form *ngIf="editingUser">
+      <div class="form-item">
+        <label>Tên đăng nhập</label>
+        <input
+          nz-input
+          [(ngModel)]="editingUser.userName"
+          name="userName"
+          [disabled]="!!editingUser.id"
+        />
+      </div>
+
+      <div class="form-item">
+        <label>Email</label>
+        <input nz-input [(ngModel)]="editingUser.email" name="email" />
+      </div>
+
+      <div class="form-item">
+        <label>Họ và tên</label>
+        <input nz-input [(ngModel)]="editingUser.fullName" name="fullName" />
+      </div>
+
+      <div class="form-item">
+        <label>Vai trò</label>
+        <nz-select
+          [(ngModel)]="editingUser.role"
+          name="role"
+          style="width: 100%"
+        >
+          <nz-option
+            *ngFor="let role of roleFilters"
+            [nzValue]="role.value"
+            [nzLabel]="role.text"
+          ></nz-option>
+        </nz-select>
+      </div>
+
+      <!-- <div class="form-item" *ngIf="!editingUser.id">
+        <label>Mật khẩu</label>
+        <input nz-input type="password" [(ngModel)]="editingUser.password" name="password" />
+      </div> -->
+    </form>
+
+    <form *ngIf="!editingUser">
+      <div class="form-item">
+        <label>Tên đăng nhập</label>
+        <input nz-input name="userName" />
+      </div>
+
+      <div class="form-item">
+        <label>Email</label>
+        <input nz-input name="email" />
+      </div>
+
+      <div class="form-item">
+        <label>Họ và tên</label>
+        <input nz-input name="fullName" />
+      </div>
+
+      <div class="form-item">
+        <label>Vai trò</label>
+        <nz-select name="role" style="width: 100%">
+          <nz-option
+            *ngFor="let role of roleFilters"
+            [nzValue]="role.value"
+            [nzLabel]="role.text"
+          ></nz-option>
+        </nz-select>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>

@@ -1,0 +1,93 @@
+.stock-management-container {
+  padding: 24px;
+}
+
+.page-title {
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.description-text {
+  display: block;
+  max-width: 300px;
+  white-space: normal;
+  color: #666;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.company-logo {
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  padding: 2px;
+  background-color: white;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.search-input {
+  width: 250px;
+}
+
+.price-cell {
+  text-align: right;
+}
+
+.change-positive {
+  color: #52c41a;
+}
+
+.change-negative {
+  color: #f5222d;
+}
+
+.change-neutral {
+  color: #595959;
+}
+
+.exchange-badge {
+  background-color: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.form-item {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-error {
+  color: #f5222d;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.empty-data {
+  text-align: center;
+  padding: 32px 0;
+  color: rgba(0, 0, 0, 0.45);
+}

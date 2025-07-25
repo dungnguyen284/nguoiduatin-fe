@@ -1,0 +1,262 @@
+.feature-news-management-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  max-width: 100%;
+}
+
+/* When used in modal */
+.feature-news-management-container.modal-view {
+  padding: 0;
+  width: 900px;
+}
+
+.header {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.instructions {
+  margin: 8px 0 0;
+  color: #666;
+}
+
+.content-container {
+  display: flex;
+  flex-grow: 1;
+  padding: 16px;
+  overflow-y: auto;
+  gap: 20px;
+  max-height: none;
+}
+
+/* Vertical layout */
+.content-container.vertical-layout {
+  flex-direction: column;
+}
+
+/* Set max height when in modal */
+.modal-view .content-container {
+  max-height: 70vh;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.vertical-layout .section {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+h3 {
+  margin: 0 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s;
+}
+
+h3.incomplete {
+  color: #ff4d4f;
+  border-bottom-color: #ff4d4f;
+}
+
+h3.complete {
+  color: #52c41a;
+  border-bottom-color: #52c41a;
+}
+
+.featured-news-container,
+.available-news-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 200px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+/* Adjust heights for vertical layout */
+.vertical-layout .featured-news-container {
+  max-height: 300px;
+}
+
+.vertical-layout .available-news-container {
+  max-height: 400px;
+}
+
+.news-card {
+  background: white;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.news-card.featured {
+  display: flex;
+  align-items: center;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  cursor: move;
+}
+
+/* Grid layout for available news in vertical mode */
+.vertical-layout .available-news-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 12px;
+}
+
+.drag-handle {
+  display: inline-block;
+  margin-right: 10px;
+  color: #999;
+  cursor: move;
+}
+
+.slot-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #1890ff;
+  color: white;
+  border-radius: 50%;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.card-content {
+  display: flex;
+  flex: 1;
+}
+
+.image {
+  width: 80px;
+  height: 60px;
+  margin-right: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info {
+  overflow: hidden;
+  flex: 1;
+}
+
+.title {
+  margin: 0 0 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ellipsis {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.vertical-layout .card-content {
+  flex: 1;
+  width: 100%;
+}
+
+.vertical-layout .news-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.date,
+.category {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.empty-message {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+}
+
+.footer {
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.footer button {
+  margin-left: 8px;
+}
+
+.validation-message {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 8px;
+  text-align: right;
+}
+
+.search-container {
+  margin-bottom: 16px;
+  max-width: 300px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Drag-Drop Classes */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.featured-news-container.cdk-drop-list-dragging
+  .news-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

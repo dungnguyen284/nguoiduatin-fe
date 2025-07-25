@@ -1,0 +1,184 @@
+<div class="stock-management-container">
+  <h1 class="page-title">Quản lý cổ phiếu</h1>
+
+  <div class="table-operations">
+    <div>
+      <input
+        nz-input
+        placeholder="Tìm kiếm mã cổ phiếu, tên công ty"
+        class="search-input"
+        [(ngModel)]="searchText"
+        (ngModelChange)="onSearch(searchText)"
+      />
+    </div>
+    <button nz-button nzType="primary" (click)="openAddStockModal()">
+      <span nz-icon nzType="plus"></span>Thêm cổ phiếu mới
+    </button>
+  </div>
+
+  <div class="table-container">
+    <nz-table
+      #stocksTable
+      [nzData]="stocks"
+      [nzLoading]="loading"
+      [nzPageSize]="pageSize"
+      [nzTotal]="totalItems"
+      [(nzPageIndex)]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)"
+      [nzShowSizeChanger]="true"
+      [nzPageSizeOptions]="[10, 20, 50]"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+      [nzFrontPagination]="false"
+      [nzShowTotal]="totalTemplate"
+    >
+      <thead>
+        <tr>
+          <th>Mã CK</th>
+          <th>Tên công ty</th>
+          <th>Mô tả</th>
+          <th>Logo</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let stock of stocksTable.data">
+          <td>
+            <strong>{{ stock.code }}</strong>
+          </td>
+          <td>{{ stock.name }}</td>
+          <td>
+            <span class="description-text"
+              >{{ stock.companyDescription | slice : 0 : 100
+              }}{{ stock.companyDescription.length > 100 ? "..." : "" }}</span
+            >
+          </td>
+          <td>
+            <img
+              [src]="getLogoUrl(stock.logoUrl)"
+              alt="Logo"
+              class="company-logo"
+              width="40"
+              height="40"
+            />
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                (click)="openEditStockModal(stock)"
+                nzTooltip="Chỉnh sửa"
+              >
+                <span nz-icon nzType="edit"></span>
+              </button>
+
+              <button
+                nz-button
+                nzType="default"
+                nzDanger
+                nzSize="small"
+                (click)="deleteStock(stock)"
+                nzTooltip="Xóa"
+              >
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="empty-data" *ngIf="!loading && stocks.length === 0">
+      Không có dữ liệu cổ phiếu
+    </div>
+  </div>
+</div>
+
+<!-- Modal thêm/sửa cổ phiếu -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="modalTitle"
+  (nzOnCancel)="cancelModal()"
+  (nzOnOk)="saveStock()"
+  [nzOkText]="'Lưu'"
+  [nzCancelText]="'Hủy'"
+>
+  <ng-container *nzModalContent>
+    <form [formGroup]="stockForm" novalidate>
+      <div class="form-item">
+        <label class="form-label">Mã chứng khoán:</label>
+        <input
+          nz-input
+          formControlName="code"
+          placeholder="VD: VNM, FPT"
+          [readonly]="!!editingStock"
+        />
+        <div
+          *ngIf="stockForm.get('code')?.dirty && stockForm.get('code')?.errors"
+          class="form-error"
+        >
+          <span *ngIf="stockForm.get('code')?.errors?.['required']"
+            >Vui lòng nhập mã chứng khoán</span
+          >
+          <span *ngIf="stockForm.get('code')?.errors?.['pattern']"
+            >Mã chứng khoán phải từ 2-6 ký tự viết hoa hoặc số</span
+          >
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label">Tên công ty:</label>
+        <input
+          nz-input
+          formControlName="name"
+          placeholder="Tên đầy đủ của công ty"
+        />
+        <div
+          *ngIf="stockForm.get('name')?.dirty && stockForm.get('name')?.errors"
+          class="form-error"
+        >
+          <span *ngIf="stockForm.get('name')?.errors?.['required']"
+            >Vui lòng nhập tên công ty</span
+          >
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label">Mô tả công ty:</label>
+        <textarea
+          nz-input
+          formControlName="companyDescription"
+          placeholder="Mô tả về công ty"
+          rows="4"
+        ></textarea>
+        <div
+          *ngIf="
+            stockForm.get('companyDescription')?.dirty &&
+            stockForm.get('companyDescription')?.errors
+          "
+          class="form-error"
+        >
+          <span
+            *ngIf="stockForm.get('companyDescription')?.errors?.['required']"
+            >Vui lòng nhập mô tả công ty</span
+          >
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label">URL Logo (tùy chọn):</label>
+        <input
+          nz-input
+          formControlName="logoUrl"
+          placeholder="Đường dẫn đến logo của công ty"
+        />
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<ng-template #totalTemplate let-total>
+  Tổng cộng {{ total }} cổ phiếu
+</ng-template>

@@ -34,7 +34,8 @@ export class RealEstateComponent implements OnInit {
       .getNewsByCategoryPaged(
         this.categoryId,
         this.page * this.pageSize,
-        this.pageSize
+        this.pageSize,
+        0 // chỉ lấy ACTIVE
       )
       .subscribe((news) => {
         this.newsList = [...this.newsList, ...news];

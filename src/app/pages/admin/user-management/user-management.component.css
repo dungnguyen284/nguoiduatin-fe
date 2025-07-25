@@ -1,0 +1,64 @@
+.user-management-container {
+  padding: 24px;
+}
+
+.page-title {
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-data {
+  text-align: center;
+  padding: 32px 0;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* Modal styles */
+:host ::ng-deep .ant-modal-footer {
+  border-top: none;
+  padding-bottom: 24px;
+}
+
+.form-item {
+  margin-bottom: 16px;
+}
+
+.form-item label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-item input,
+.form-item select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}

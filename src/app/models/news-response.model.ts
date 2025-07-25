@@ -11,7 +11,7 @@ export interface NewsResponseDTO {
   link: string;
   imageUrl: string;
   source: string;
-  isActive: boolean;
+  status: number; // 0: ACTIVE, 1: INACTIVE, 2: DRAFT
   isFrontPage: boolean;
   slotNumber: number;
   content: string;

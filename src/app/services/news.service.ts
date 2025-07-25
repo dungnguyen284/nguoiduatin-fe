@@ -13,25 +13,57 @@ export class NewsService {
 
   constructor(private http: HttpClient) {}
 
-  getAllNews(includeInactive: boolean): Observable<NewsResponseDTO[]> {
-    if (includeInactive) {
-      return this.http.get<NewsResponseDTO[]>(`${this.apiUrl}/api/News`);
+  /**
+   * Lấy tất cả tin tức, có thể lọc theo status (0: ACTIVE, 1: INACTIVE, 2: DRAFT, 3: DRAFT2...)
+   * Nếu statusFilter undefined thì lấy tất cả
+   */
+  getAllNews(statusFilter?: number | number[]): Observable<NewsResponseDTO[]> {
+    let filter = '';
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter = `$filter=(${statusFilter
+          .map((s) => `status eq ${s}`)
+          .join(' or ')})`;
+      } else {
+        filter = `$filter=status eq ${statusFilter}`;
+      }
     }
-    return this.http.get<NewsResponseDTO[]>(
-      `${this.apiUrl}/api/News?$filter=IsActive eq true`
-    );
+    const url = filter
+      ? `${this.apiUrl}/api/News?${filter}`
+      : `${this.apiUrl}/api/News`;
+    return this.http.get<NewsResponseDTO[]>(url);
   }
 
+  /**
+   * Lấy tin theo author, có thể lọc theo status và tìm kiếm theo tiêu đề
+   */
   getNewsByAuthor(
     authorId: string,
     skip: number,
     top: number,
-    includeInactive: boolean = false
+    statusFilter?: number | number[],
+    searchText?: string
   ): Observable<NewsResponseDTO[]> {
     let filter = `authorId eq '${authorId}'`;
-    if (!includeInactive) {
-      filter += ' and IsActive eq true';
+
+    // Thêm điều kiện tìm kiếm theo tiêu đề nếu có
+    if (searchText && searchText.trim().length > 0) {
+      searchText = searchText.replace(/'/g, "''").toLowerCase(); // Escape single quotes
+      filter += ` and contains(tolower(title),'${searchText}')`;
     }
+
+    // Thêm điều kiện lọc theo trạng thái
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter +=
+          ' and (' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')';
+      } else {
+        filter += ` and status eq ${statusFilter}`;
+      }
+    }
+
     return this.http.get<NewsResponseDTO[]>(
       `${this.apiUrl}/api/News?$filter=${filter}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
     );
@@ -39,11 +71,18 @@ export class NewsService {
 
   getNewsByCategory(
     categoryId: string,
-    includeInactive: boolean = false
+    statusFilter?: number | number[]
   ): Observable<NewsResponseDTO[]> {
     let filter = `categoryId eq ${categoryId}`;
-    if (!includeInactive) {
-      filter += ' and IsActive eq true';
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter +=
+          ' and (' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')';
+      } else {
+        filter += ` and status eq ${statusFilter}`;
+      }
     }
     return this.http.get<NewsResponseDTO[]>(
       `${this.apiUrl}/api/News?$filter=${filter}`
@@ -52,11 +91,18 @@ export class NewsService {
 
   getTopLatestNews(
     count: number,
-    includeInactive: boolean = false
+    statusFilter?: number | number[]
   ): Observable<NewsResponseDTO[]> {
     let filter = '';
-    if (!includeInactive) {
-      filter = '$filter=IsActive eq true&';
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter =
+          '$filter=(' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')&';
+      } else {
+        filter = `$filter=status eq ${statusFilter}&`;
+      }
     }
     return this.http.get<NewsResponseDTO[]>(
       `${this.apiUrl}/api/News?${filter}$orderby=PublicationDate desc&$top=${count}`
@@ -69,11 +115,18 @@ export class NewsService {
 
   searchNewsByTitle(
     keyword: string,
-    includeInactive: boolean = false
+    statusFilter?: number | number[]
   ): Observable<NewsResponseDTO[]> {
     let filter = `contains(title,'${keyword}')`;
-    if (!includeInactive) {
-      filter += ' and IsActive eq true';
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter +=
+          ' and (' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')';
+      } else {
+        filter += ` and status eq ${statusFilter}`;
+      }
     }
     return this.http.get<NewsResponseDTO[]>(
       `${this.apiUrl}/api/News?$filter=${filter}`
@@ -83,11 +136,18 @@ export class NewsService {
   getNewsPaged(
     skip: number,
     top: number,
-    includeInactive: boolean = false
+    statusFilter?: number | number[]
   ): Observable<NewsResponseDTO[]> {
     let filter = '';
-    if (!includeInactive) {
-      filter = '$filter=IsActive eq true&';
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter =
+          '$filter=(' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')&';
+      } else {
+        filter = `$filter=status eq ${statusFilter}&`;
+      }
     }
     return this.http.get<NewsResponseDTO[]>(
       `${this.apiUrl}/api/News?${filter}$orderby=SlotNumber desc,PublicationDate desc&$skip=${skip}&$top=${top}`
@@ -98,11 +158,18 @@ export class NewsService {
     categoryId: string,
     skip: number,
     top: number,
-    includeInactive: boolean = false
+    statusFilter?: number | number[]
   ): Observable<NewsResponseDTO[]> {
     let filter = `categoryId eq ${categoryId}`;
-    if (!includeInactive) {
-      filter += ' and IsActive eq true';
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter +=
+          ' and (' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')';
+      } else {
+        filter += ` and status eq ${statusFilter}`;
+      }
     }
     return this.http.get<NewsResponseDTO[]>(
       `${this.apiUrl}/api/News?$filter=${filter}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
@@ -110,14 +177,23 @@ export class NewsService {
   }
 
   createNews(news: NewsCreateDTO) {
-    // Đảm bảo isActive luôn là false và link luôn rỗng khi tạo mới
+    // status: 0 ACTIVE, 1 INACTIVE, 2 DRAFT
     const payload = {
       ...news,
-      isActive: false,
       link: '',
       source: 'Người Đưa Tin',
     };
     return this.http.post(`${this.apiUrl}/api/news`, payload);
+  }
+
+  editNews(id: string, news: NewsCreateDTO) {
+    // status: 1 ACTIVE, 0 INACTIVE, 2 DRAFT
+    const payload = {
+      ...news,
+      link: '',
+      source: 'Người Đưa Tin',
+    };
+    return this.http.put(`${this.apiUrl}/api/news/${id}`, payload);
   }
 
   getPresignedUrl(fileName: string, fileType: string) {
@@ -136,5 +212,9 @@ export class NewsService {
       reportProgress: true,
       observe: 'events',
     });
+  }
+
+  setFrontpageNews(newsItems: { id: number; slotNumber: number }[]) {
+    return this.http.put(`${this.apiUrl}/api/news/frontpages`, newsItems);
   }
 }

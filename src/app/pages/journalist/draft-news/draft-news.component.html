@@ -1,0 +1,47 @@
+<div class="draft-news-container">
+  <nz-card nzTitle="Bản nháp của tôi">
+    <nz-table
+      [nzData]="draftArticles"
+      [nzPageSize]="10"
+      [nzShowPagination]="false"
+    >
+      <thead>
+        <tr>
+          <th>Tiêu đề</th>
+          <th>Chuyên mục</th>
+          <th>Ngày tạo</th>
+          <th>Lượt xem</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let news of draftArticles">
+          <td>{{ news.title }}</td>
+          <td>{{ news.categoryName }}</td>
+          <td>{{ news.publicationDate | date : "dd/MM/yyyy HH:mm" }}</td>
+          <td>{{ news.viewCount || 0 }}</td>
+          <td>
+            <button
+              nz-button
+              nzType="primary"
+              nzSize="small"
+              (click)="editDraft(news.id)"
+            >
+              <span nz-icon nzType="edit"></span> Viết tiếp
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div style="text-align: center; margin-top: 16px" *ngIf="!allLoaded">
+      <button
+        nz-button
+        nzType="default"
+        (click)="loadDraftArticles()"
+        [disabled]="loading"
+      >
+        Xem thêm
+      </button>
+    </div>
+  </nz-card>
+</div>

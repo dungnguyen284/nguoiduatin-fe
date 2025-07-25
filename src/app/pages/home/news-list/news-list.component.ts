@@ -46,7 +46,7 @@ export class NewsListComponent implements OnInit {
     if (this.loading || this.allLoaded) return;
     this.loading = true;
     this.newsService
-      .getNewsPaged(this.page * this.pageSize, this.pageSize)
+      .getNewsPaged(this.page * this.pageSize, this.pageSize, 0)
       .subscribe((news) => {
         this.newsList = [...this.newsList, ...news];
         this.loading = false;

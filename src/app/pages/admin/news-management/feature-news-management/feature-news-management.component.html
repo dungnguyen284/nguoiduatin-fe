@@ -1,0 +1,143 @@
+<div class="feature-news-management-container" [class.modal-view]="modalRef">
+  <div class="header">
+    <h2 *ngIf="modalRef">Quản lý tin hàng đầu</h2>
+    <h1 *ngIf="!modalRef" class="page-title">Quản lý tin hàng đầu</h1>
+    <p class="instructions">
+      Bạn <strong>phải chọn đúng {{ MAX_FEATURED_NEWS }} tin</strong> để hiển
+      thị làm tin hàng đầu và có thể sắp xếp thứ tự hiển thị bằng cách kéo thả.
+    </p>
+  </div>
+
+  <nz-spin [nzSpinning]="loading">
+    <div class="content-container">
+      <!-- Featured News Section -->
+      <div class="section">
+        <h3>
+          Tin hàng đầu ({{ featuredNews.length }}/{{ MAX_FEATURED_NEWS }})
+        </h3>
+        <div
+          cdkDropList
+          #featuredNewsList="cdkDropList"
+          [cdkDropListData]="featuredNews"
+          (cdkDropListDropped)="onDrop($event)"
+          class="featured-news-container"
+        >
+          <div *ngIf="featuredNews.length === 0" class="empty-message">
+            Chưa có tin hàng đầu nào được chọn
+          </div>
+
+          <div
+            *ngFor="let news of featuredNews"
+            class="news-card featured"
+            cdkDrag
+          >
+            <div class="drag-handle" cdkDragHandle>
+              <span nz-icon nzType="drag" nzTheme="outline"></span>
+            </div>
+            <div class="slot-number">{{ news.slotNumber }}</div>
+            <div class="card-content">
+              <div class="image" *ngIf="news.imageUrl">
+                <img [src]="news.imageUrl" [alt]="news.title" />
+              </div>
+              <div class="info">
+                <h4 class="title">{{ news.title }}</h4>
+                <p class="date">{{ formatDate(news.publicationDate) }}</p>
+                <p class="category">{{ news.categoryName }}</p>
+              </div>
+            </div>
+            <div class="actions">
+              <button
+                nz-button
+                nzType="default"
+                nzDanger
+                (click)="removeFromFeatured(news)"
+              >
+                <span nz-icon nzType="minus-circle"></span> Xóa khỏi tin hàng
+                đầu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Available News Section -->
+      <div class="section">
+        <h3>Tin khả dụng</h3>
+        
+        <!-- Thêm ô tìm kiếm -->
+        <div class="search-container">
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input type="text" nz-input placeholder="Tìm kiếm tin tức" [(ngModel)]="searchText" (keyup)="onSearch(searchText)">
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <span nz-icon nzType="search"></span>
+          </ng-template>
+        </div>
+        
+        <div class="available-news-container">
+          <div *ngIf="filteredAvailableNews.length === 0" class="empty-message">
+            Không có tin khả dụng
+          </div>
+
+          <div *ngFor="let news of filteredAvailableNews" class="news-card">
+            <div class="card-content">
+              <div class="image" *ngIf="news.imageUrl">
+                <img [src]="news.imageUrl" [alt]="news.title" />
+              </div>
+              <div class="info">
+                <h4 class="title" nz-tooltip [nzTooltipTitle]="news.title">{{ news.title }}</h4>
+                <p class="date">{{ formatDate(news.publicationDate) }}</p>
+                <p class="category">{{ news.categoryName }}</p>
+              </div>
+            </div>
+            <div class="actions">
+              <button
+                nz-button
+                nzType="primary"
+                [disabled]="featuredNews.length >= MAX_FEATURED_NEWS"
+                (click)="addToFeatured(news)"
+              >
+                <span nz-icon nzType="plus-circle"></span> Thêm vào tin hàng đầu
+              </button>
+            </div>
+          </div>
+
+          <!-- Thêm phân trang -->
+          <div class="pagination-container" *ngIf="total > 0">
+            <nz-pagination
+              [nzPageIndex]="pageIndex"
+              [nzPageSize]="pageSize"
+              [nzTotal]="total"
+              [nzShowSizeChanger]="true"
+              [nzPageSizeOptions]="[4, 8, 12]"
+              (nzPageIndexChange)="onPageChange($event)"
+              (nzPageSizeChange)="onPageSizeChange($event)"
+            ></nz-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-spin>
+
+  <div class="footer">
+    <button *ngIf="modalRef" nz-button nzType="default" (click)="close()">
+      Hủy
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      [nzLoading]="saving"
+      [disabled]="featuredNews.length !== MAX_FEATURED_NEWS"
+      (click)="saveChanges()"
+    >
+      Lưu thay đổi
+    </button>
+    <div
+      *ngIf="featuredNews.length !== MAX_FEATURED_NEWS"
+      class="validation-message"
+    >
+      Phải chọn đủ {{ MAX_FEATURED_NEWS }} tin hàng đầu (hiện tại:
+      {{ featuredNews.length }}/{{ MAX_FEATURED_NEWS }})
+    </div>
+  </div>
+</div>

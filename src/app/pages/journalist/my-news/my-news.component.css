@@ -4,6 +4,23 @@
   padding: 32px 0;
 }
 
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.status-filter {
+  min-width: 150px;
+}
+
+.search-container {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 300px;
+}
+
 nz-card {
   margin-bottom: 24px;
 }
@@ -14,8 +31,30 @@ nz-table {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding: 0 16px;
+}
+
 @media (max-width: 900px) {
   .my-news-container {
     padding: 16px 4px;
+  }
+
+  .pagination-container {
+    justify-content: center;
+    padding: 0;
+  }
+  
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .search-container {
+    max-width: 100%;
   }
 }

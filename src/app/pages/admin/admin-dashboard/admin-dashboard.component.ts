@@ -11,6 +11,7 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -28,6 +29,7 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
     NzListModule,
     NzAvatarModule,
     NzBadgeModule,
+    RouterModule,
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
