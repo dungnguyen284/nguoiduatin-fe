@@ -1,22 +1,42 @@
 <h2 mat-dialog-title>Tìm kiếm</h2>
 <div mat-dialog-content>
-  <mat-form-field style="width: 100%">
-    <input
-      matInput
-      [(ngModel)]="keyword"
-      placeholder="Nhập mã CK, tin tức,..."
-    />
-  </mat-form-field>
   <mat-radio-group
     [(ngModel)]="searchType"
+    (ngModelChange)="onSearchTypeChange()"
     style="display: flex; gap: 16px; margin-bottom: 16px"
   >
-    <mat-radio-button value="code">Mã CK</mat-radio-button>
     <mat-radio-button value="news">Tin tức</mat-radio-button>
+    <mat-radio-button value="stock">Cổ phiếu</mat-radio-button>
   </mat-radio-group>
+  
+  <div style="position: relative; width: 100%;">
+    <mat-form-field style="width: 100%;">
+      <input
+        matInput
+        [formControl]="searchControl"
+        [placeholder]="searchType === 'news' ? 'Nhập từ khóa tin tức...' : 'Nhập mã CK hoặc tên công ty...'"
+        (focus)="onSearchFocus()"
+        (blur)="hideSuggestions()"
+      />
+    </mat-form-field>
+    <div 
+      *ngIf="suggestions.length > 0 && showSuggestions" 
+      class="suggestions-container"
+    >
+      <mat-list>
+        <mat-list-item 
+          *ngFor="let item of suggestions.slice(0, 5)"
+          (click)="onSuggestionClick(item)"
+          class="suggestion-item"
+        >
+          <span>{{ getSuggestionTitle(item) }}</span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
   <mat-divider></mat-divider>
   <div style="margin: 16px 0 8px 0; font-weight: 500">Truy cập nhanh</div>
-  <div style="display: flex; flex-wrap: wrap; gap: 12px">
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px">
     <a
       *ngFor="let r of routes"
       (click)="goto(r.path)"
@@ -28,6 +48,30 @@
       "
       ># {{ r.label }}</a
     >
+  </div>
+  
+  <mat-divider></mat-divider>
+  <div style="margin: 16px 0 8px 0; font-weight: 500">Tags phổ biến</div>
+  <div *ngIf="loading" style="text-align: center; padding: 16px; color: #666;">
+    Đang tải tags...
+  </div>
+  <div *ngIf="!loading && tags.length === 0" style="text-align: center; padding: 16px; color: #999;">
+    Không có tag nào
+  </div>
+  <div *ngIf="!loading && tags.length > 0" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 120px; overflow-y: auto;">
+    <button
+      *ngFor="let tag of tags"
+      (click)="onTagClick(tag)"
+      mat-stroked-button
+      style="
+        font-size: 12px;
+        padding: 4px 12px;
+        height: auto;
+        min-height: 32px;
+      "
+    >
+      {{ tag.name }} ({{ tag.newsCount }})
+    </button>
   </div>
 </div>
 <div mat-dialog-actions align="end">

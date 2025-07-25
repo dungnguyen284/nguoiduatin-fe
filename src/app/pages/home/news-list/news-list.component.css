@@ -1,3 +1,14 @@
+.tag-filter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f0f8ff;
+  border: 1px solid #d6e7ff;
+  border-radius: 6px;
+}
+
 .news-meta {
   display: flex;
   justify-content: space-between;

@@ -1,0 +1,637 @@
+<div class="stock-detail-container">
+  <!-- Phần giá hiện tại -->
+
+  <!-- Stock Header -->
+  <div class="stock-header">
+    <button nz-button nzType="link" (click)="goBack()">
+      <span nz-icon nzType="arrow-left" nzTheme="outline"></span>
+      Quay lại
+    </button>
+    <h1 class="stock-title">{{ stockSymbol }}</h1>
+  </div>
+
+  <!-- Spin loading -->
+  <nz-spin [nzSpinning]="loading">
+    <!-- Error State -->
+    <nz-card *ngIf="error && !loading" nzTitle="Lỗi">
+      <div class="error-message">
+        <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
+        {{ error }}
+        <button
+          nz-button
+          nzType="primary"
+          (click)="loadStockData()"
+          style="margin-left: 8px"
+        >
+          Thử lại
+        </button>
+      </div>
+    </nz-card>
+
+    <!-- Stock Data -->
+    <div *ngIf="stockData && !loading">
+      <div class="main-content-layout">
+        <!-- Left Column - Main Content -->
+        <div class="left-column">
+          <!-- Stock Header Info -->
+          <nz-card class="stock-info-card">
+            <div class="stock-header-info">
+              <div class="company-info">
+                <img
+                  *ngIf="stockData.stock.logoUrl"
+                  [src]="stockData.stock.logoUrl"
+                  [alt]="stockData.stock.name"
+                  class="company-logo"
+                />
+                <div class="company-details">
+                  <h1 class="company-name">{{ stockData.stock.name }}</h1>
+                  <h2 class="stock-code">{{ stockData.stock.code }}</h2>
+                  <p>{{ stockData.stock.companyDescription }}</p>
+                </div>
+              </div>
+
+              <div class="price-info">
+                <div
+                  class="current-price"
+                  [style.color]="getHistoricalPriceChangeColor()"
+                >
+                  {{
+                    getLatestRecord()?.close?.toLocaleString("vi-VN") || "N/A"
+                  }}
+                </div>
+                <div
+                  class="price-change"
+                  [style.color]="getHistoricalPriceChangeColor()"
+                >
+                  <span
+                    nz-icon
+                    [nzType]="
+                      getHistoricalPriceChange() >= 0
+                        ? 'arrow-up'
+                        : 'arrow-down'
+                    "
+                  ></span>
+                  {{ getHistoricalPriceChange().toFixed(2) }}
+                  ({{ getHistoricalPriceChangePercent().toFixed(2) }}%)
+                </div>
+                <div class="update-time">Cập nhật: {{ getCurrentTime() }}</div>
+              </div>
+            </div>
+            <!-- Stock Chart -->
+            <app-stock-chart
+              [historicalData]="stockData.historical.records"
+              [stockSymbol]="stockData.stock.code"
+              style="margin-top: 16px; display: block"
+            >
+            </app-stock-chart>
+
+            <!-- Trading Stats -->
+            <nz-divider></nz-divider>
+            <div nz-row [nzGutter]="16" *ngIf="getLatestRecord()">
+              <div nz-col nzSpan="6">
+                <nz-statistic
+                  nzTitle="Giá mở cửa"
+                  [nzValue]="getLatestRecord()!.open"
+                  nzSuffix=""
+                >
+                </nz-statistic>
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-statistic
+                  nzTitle="Giá đóng cửa"
+                  [nzValue]="getLatestRecord()!.close"
+                  nzSuffix=""
+                >
+                </nz-statistic>
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-statistic
+                  nzTitle="Cao nhất"
+                  [nzValue]="getLatestRecord()!.high"
+                  nzSuffix=""
+                  [nzValueStyle]="{ color: '#cf1322' }"
+                >
+                </nz-statistic>
+              </div>
+              <div nz-col nzSpan="6">
+                <nz-statistic
+                  nzTitle="Thấp nhất"
+                  [nzValue]="getLatestRecord()!.low"
+                  nzSuffix=""
+                  [nzValueStyle]="{ color: '#389e0d' }"
+                >
+                </nz-statistic>
+              </div>
+            </div>
+
+            <!-- Volume Information -->
+            <div
+              nz-row
+              [nzGutter]="16"
+              style="margin-top: 16px"
+              *ngIf="getLatestRecord()"
+            >
+              <div nz-col nzSpan="8">
+                <nz-statistic
+                  nzTitle="Khối lượng"
+                  [nzValue]="getLatestRecord()!.volume"
+                  nzSuffix="CP"
+                >
+                </nz-statistic>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-statistic
+                  nzTitle="Ngày giao dịch"
+                  [nzValue]="formatRecordDate(getLatestRecord()!.date)"
+                  nzSuffix=""
+                >
+                </nz-statistic>
+              </div>
+              <div nz-col nzSpan="8">
+                <nz-statistic
+                  nzTitle="Biến động"
+                  [nzValue]="getHistoricalPriceChange().toFixed(2)"
+                  nzSuffix="VND"
+                  [nzValueStyle]="{ color: getHistoricalPriceChangeColor() }"
+                >
+                </nz-statistic>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Tab Content Section -->
+          <nz-card style="margin-top: 16px">
+            <nz-tabset nzType="card">
+              <!-- Tab Tài chính -->
+              <nz-tab nzTitle="Tài chính">
+                <div class="tab-content">
+                  <div class="finance-section">
+                    <!-- Period Selection -->
+                    <div class="period-selection">
+                      <button 
+                        nz-button 
+                        [nzType]="selectedPeriod === 'year' ? 'primary' : 'default'"
+                        (click)="onPeriodChange('year')"
+                        class="period-btn"
+                      >
+                        Xem theo năm
+                      </button>
+                      <button 
+                        nz-button 
+                        [nzType]="selectedPeriod === 'quarter' ? 'primary' : 'default'"
+                        (click)="onPeriodChange('quarter')"
+                        class="period-btn"
+                      >
+                        Xem theo quý
+                      </button>
+                    </div>
+
+                    <div *ngIf="financialLoading" class="financial-loading">
+                      <nz-spin nzSpinning="true">
+                        <div style="height: 200px;"></div>
+                      </nz-spin>
+                    </div>
+
+                    <div *ngIf="!financialLoading" class="financial-data">
+                      <!-- Thông báo khi không có dữ liệu -->
+                      <div *ngIf="(!financialRatios || !financialRatios.data || !financialRatios.data.records || financialRatios.data.records.length === 0) && (!incomeStatement || !incomeStatement.data || !incomeStatement.data.records || incomeStatement.data.records.length === 0)" class="no-financial-data">
+                        <nz-empty nzNotFoundContent="Không có dữ liệu tài chính cho mã CK này"></nz-empty>
+                      </div>
+
+                      <!-- Chỉ số tài chính chính -->
+                      <div class="financial-section" *ngIf="financialRatios && financialRatios.data && financialRatios.data.records && financialRatios.data.records.length > 0">
+                        <h4 class="financial-section-title">Chỉ số tài chính chính</h4>
+                        <div class="financial-table">
+                          <div class="table-header">
+                            <div class="header-cell metric-header"></div>
+                            <div class="header-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ ratio.quarter === 0 ? 'Năm ' + ratio.year : formatPeriod(ratio.year, ratio.quarter) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">EPS (VNĐ)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.eps) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">BVPS (VNĐ)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(ratio.bvps) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">P/E</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.peRatio) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">P/B</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.pbRatio) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">ROE (%)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatPercentValue(ratio.roe) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">ROA (%)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatPercentValue(ratio.roa) }}
+                            </div>
+                          </div>
+
+                          <div class="table-row">
+                            <div class="metric-cell">Biên lợi nhuận ròng (%)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatPercentValue(ratio.netProfitMargin) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Thông tin thị trường -->
+                      <div class="financial-section" *ngIf="financialRatios && financialRatios.data && financialRatios.data.records && financialRatios.data.records.length > 0">
+                        <h4 class="financial-section-title">Thông tin thị trường</h4>
+                        <div class="financial-table">
+                          <div class="table-header">
+                            <div class="header-cell metric-header"></div>
+                            <div class="header-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ ratio.quarter === 0 ? 'Năm ' + ratio.year : formatPeriod(ratio.year, ratio.quarter) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Vốn hóa thị trường</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(ratio.marketCapital) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Số CP lưu hành</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(ratio.outstandingShares) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">P/S</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.psRatio) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">P/Cash Flow</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.pCashFlow) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Tỷ suất cổ tức (%)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatPercentValue(ratio.dividendYield) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Cấu trúc tài chính -->
+                      <div class="financial-section" *ngIf="financialRatios && financialRatios.data && financialRatios.data.records && financialRatios.data.records.length > 0">
+                        <h4 class="financial-section-title">Cấu trúc tài chính</h4>
+                        <div class="financial-table">
+                          <div class="table-header">
+                            <div class="header-cell metric-header"></div>
+                            <div class="header-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ ratio.quarter === 0 ? 'Năm ' + ratio.year : formatPeriod(ratio.year, ratio.quarter) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Nợ/VCSH</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.debtToEquity) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">TS cố định/VCSH</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.fixedAssetToEquity) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">VCSH/VĐL</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.equityToCharterCapital) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Đòn bẩy tài chính</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatRatioValue(ratio.financialLeverage) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">ROIC (%)</div>
+                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                              {{ formatPercentValue(ratio.roic) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Báo cáo thu nhập (nếu có) -->
+                      <div class="financial-section" *ngIf="incomeStatement && incomeStatement.data && incomeStatement.data.records && incomeStatement.data.records.length > 0">
+                        <h4 class="financial-section-title">Kết quả kinh doanh</h4>
+                        <div class="financial-table">
+                          <div class="table-header">
+                            <div class="header-cell metric-header"></div>
+                            <div class="header-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                              {{ statement.quarter === 0 ? 'Năm ' + statement.year : formatPeriod(statement.year, statement.quarter) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Doanh thu thuần</div>
+                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(statement.revenue) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Lợi nhuận trước thuế</div>
+                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(statement.netProfit) }}
+                            </div>
+                          </div>
+                          
+                          <div class="table-row">
+                            <div class="metric-cell">Lợi nhuận sau thuế</div>
+                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(statement.profitAfterTax) }}
+                            </div>
+                          </div>
+
+                          <div class="table-row">
+                            <div class="metric-cell">LNST của cổ đông công ty mẹ</div>
+                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                              {{ formatLargeNumber(statement.profitAttributableToParent) }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </nz-tab>
+
+              <!-- Tab Cổ tức - Sự kiện -->
+              <nz-tab nzTitle="Cổ tức - Sự kiện">
+                <div class="tab-content">
+                  <div class="events-section">
+                    <div
+                      class="events-list"
+                      *ngIf="stockData.events.events.length > 0; else noEvents"
+                    >
+                      <div
+                        *ngFor="let event of stockData.events.events"
+                        class="event-item"
+                      >
+                        <div class="event-header">
+                          <h5 class="event-name">{{ event.eventTitle }}</h5>
+                          <span class="event-date">{{
+                            formatDate(event.recordDate)
+                          }}</span>
+                        </div>
+                        <div class="event-details">
+                          <div class="event-detail-row">
+                            <span class="detail-label">Loại:</span>
+                            <span class="detail-value">{{
+                              event.eventListName
+                            }}</span>
+                          </div>
+                          <div class="event-detail-row" *ngIf="event.ratio">
+                            <span class="detail-label">Tỷ lệ:</span>
+                            <span class="detail-value"
+                              >{{ formatEventRatio(event.ratio) }}%</span
+                            >
+                          </div>
+                          <div class="event-detail-row" *ngIf="event.value">
+                            <span class="detail-label">Giá trị:</span>
+                            <span class="detail-value"
+                              >{{ formatEventValue(event.value) }} VND/CP</span
+                            >
+                          </div>
+                          <div class="event-detail-row">
+                            <span class="detail-label">Ngày công bố:</span>
+                            <span class="detail-value">{{
+                              formatDate(event.publicDate)
+                            }}</span>
+                          </div>
+                          <div
+                            class="event-detail-row"
+                            *ngIf="event.exrightDate"
+                          >
+                            <span class="detail-label">Ngày thực hiện:</span>
+                            <span class="detail-value">{{
+                              formatDate(event.exrightDate)
+                            }}</span>
+                          </div>
+                          <div class="event-detail-row" *ngIf="event.issueDate">
+                            <span class="detail-label">Ngày phát hành:</span>
+                            <span class="detail-value">{{
+                              formatDate(event.issueDate)
+                            }}</span>
+                          </div>
+                          <div class="event-detail-row" *ngIf="event.sourceUrl">
+                            <span class="detail-label">Nguồn:</span>
+                            <span class="detail-value">
+                              <a
+                                [href]="event.sourceUrl"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="source-link"
+                              >
+                                Xem chi tiết
+                              </a>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <ng-template #noEvents>
+                      <p class="no-data">Không có sự kiện cổ tức</p>
+                    </ng-template>
+                  </div>
+                </div>
+              </nz-tab>
+
+              <!-- Tab Ban lãnh đạo -->
+              <nz-tab nzTitle="Ban lãnh đạo">
+                <div class="tab-content">
+                  <div class="leadership-section-tab">
+                    <div class="officers-list-vertical">
+                      <div
+                        *ngFor="let officer of stockData.officers.officers"
+                        class="officer-card-vertical"
+                      >
+                        <div class="officer-main-info">
+                          <div class="officer-avatar-large">
+                            <div class="avatar-circle-large">
+                              {{ getOfficerInitials(officer.officerName) }}
+                            </div>
+                          </div>
+                          <div class="officer-details">
+                            <h4 class="officer-name">
+                              {{ officer.officerName }}
+                            </h4>
+                            <p class="officer-position">
+                              {{ officer.positionShortName }}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="officer-stats">
+                          <div class="stat-item">
+                            <span class="stat-label">Tỷ lệ sở hữu:</span>
+                            <span class="stat-value"
+                              >{{
+                                (officer.officerOwnPercent * 100).toFixed(4)
+                              }}%</span
+                            >
+                          </div>
+                          <div class="stat-item">
+                            <span class="stat-label">Số lượng CP:</span>
+                            <span class="stat-value">{{
+                              officer.quantity.toLocaleString("vi-VN")
+                            }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </nz-tab>
+
+              <!-- Tab Cơ cấu sở hữu -->
+              <nz-tab nzTitle="Cơ cấu sở hữu">
+                <div class="tab-content">
+                  <div class="shareholders-section">
+                    <div class="shareholders-list">
+                      <div
+                        *ngFor="
+                          let shareholder of stockData.shareholders
+                            .shareholders;
+                          let i = index
+                        "
+                        class="shareholder-card"
+                      >
+                        <div class="shareholder-rank">
+                          <span class="rank-number">{{ i + 1 }}</span>
+                        </div>
+                        <div class="shareholder-info">
+                          <h4 class="shareholder-name">
+                            {{ shareholder.name }}
+                          </h4>
+                          <div class="shareholder-stats">
+                            <div class="stat-row">
+                              <span class="stat-label">Số lượng CP:</span>
+                              <span class="stat-value">{{
+                                shareholder.quantity.toLocaleString("vi-VN")
+                              }}</span>
+                            </div>
+                            <div class="stat-row">
+                              <span class="stat-label">Tỷ lệ sở hữu:</span>
+                              <span class="stat-value ownership-percent"
+                                >{{
+                                  (
+                                    shareholder.ownershipPercentage * 100
+                                  ).toFixed(2)
+                                }}%</span
+                              >
+                            </div>
+                            <div class="stat-row">
+                              <span class="stat-label">Cập nhật:</span>
+                              <span class="stat-value">{{
+                                formatDate(shareholder.updateDate)
+                              }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </nz-tab>
+            </nz-tabset>
+          </nz-card>
+        </div>
+
+        <!-- Right Column - Thông tin bổ sung -->
+        <div class="right-column">
+          <nz-card>
+            <div class="quick-info-section">
+              <h3 class="section-title">Thông tin nhanh</h3>
+              <div class="quick-stats">
+                <div class="quick-stat-item">
+                  <span class="stat-label">Mã CK:</span>
+                  <span class="stat-value">{{ stockData.stock.code }}</span>
+                </div>
+                <div class="quick-stat-item">
+                  <span class="stat-label">Tên công ty:</span>
+                  <span class="stat-value">{{ stockData.stock.name }}</span>
+                </div>
+                <div class="quick-stat-item">
+                  <span class="stat-label">Số bài tin:</span>
+                  <span class="stat-value">{{
+                    stockData.news.articles.length
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Tin tức liên quan -->
+          <nz-card
+            style="margin-top: 16px"
+            *ngIf="stockData.news.articles.length > 0"
+          >
+            <div class="news-section">
+              <h3 class="section-title">Tin tức liên quan</h3>
+              <div class="news-links">
+                <div
+                  *ngFor="let article of stockData.news.articles.slice(0, 5)"
+                  class="news-link-item"
+                >
+                  <a
+                    [href]="article.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="news-link"
+                  >
+                    {{ article.title }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+      </div>
+    </div>
+  </nz-spin>
+</div>

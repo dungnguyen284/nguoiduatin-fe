@@ -1,8 +1,9 @@
 <header>
   <nav class="container">
-    <a routerLink="/">Trang chủ</a> | <a routerLink="/stock">Chứng Khoán</a> |
-    <a routerLink="/real-estate">Bất động sản</a> |
-    <a routerLink="/finance">Tài chính</a> |
-    <a routerLink="/company">Doanh Nghiệp</a>
+    <a routerLink="/" (click)="onCategoryClick(null)">Trang chủ</a> | 
+    <a routerLink="/stock" (click)="onCategoryClick('1')">Chứng Khoán</a> |
+    <a routerLink="/real-estate" (click)="onCategoryClick('2')">Bất động sản</a> |
+    <a routerLink="/finance" (click)="onCategoryClick('3')">Tài chính</a> |
+    <a routerLink="/company" (click)="onCategoryClick('4')">Doanh Nghiệp</a>
   </nav>
 </header>

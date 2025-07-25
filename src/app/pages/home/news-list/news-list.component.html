@@ -1,3 +1,14 @@
+<div *ngIf="selectedTag" class="tag-filter-info">
+  <nz-tag nzColor="blue">
+    <span nz-icon nzType="tag" nzTheme="outline"></span>
+    Đang lọc theo tag: {{ selectedTag }}
+  </nz-tag>
+  <button nz-button nzType="link" nzSize="small" (click)="clearTagFilter()">
+    <span nz-icon nzType="close" nzTheme="outline"></span>
+    Bỏ lọc
+  </button>
+</div>
+
 <ng-container *ngIf="!loading; else loadingTpl">
   <div class="news-list-container">
     <app-feature-news-list [newsList]="newsList"></app-feature-news-list>

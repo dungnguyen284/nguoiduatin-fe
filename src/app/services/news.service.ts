@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { NewsResponseDTO } from '../models/news-response.model';
 import { NewsCreateDTO } from '../models/news-create.dto';
+import { FinancialRatiosResponse, IncomeStatementResponse } from '../models/financial-data.model';
 
 @Injectable({
   providedIn: 'root',
@@ -117,7 +118,8 @@ export class NewsService {
     keyword: string,
     statusFilter?: number | number[]
   ): Observable<NewsResponseDTO[]> {
-    let filter = `contains(title,'${keyword}')`;
+    const lowerKeyword = keyword.toLowerCase().replace(/'/g, "''");
+    let filter = `contains(tolower(title),'${lowerKeyword}')`;
     if (typeof statusFilter !== 'undefined') {
       if (Array.isArray(statusFilter)) {
         filter +=
@@ -176,6 +178,29 @@ export class NewsService {
     );
   }
 
+  searchNewsByTag(
+    tagName: string,
+    skip: number,
+    top: number,
+    statusFilter?: number | number[]
+  ): Observable<{ data: NewsResponseDTO[] }> {
+    const lowerTagName = tagName.toLowerCase().replace(/'/g, "''");
+    let filter = `tagNames/any(t: tolower(t) eq '${lowerTagName}')`;
+    if (typeof statusFilter !== 'undefined') {
+      if (Array.isArray(statusFilter)) {
+        filter +=
+          ' and (' +
+          statusFilter.map((s) => `status eq ${s}`).join(' or ') +
+          ')';
+      } else {
+        filter += ` and status eq ${statusFilter}`;
+      }
+    }
+    return this.http.get<{ data: NewsResponseDTO[] }>(
+      `${this.apiUrl}/api/News?$filter=${filter}&$orderby=PublicationDate desc&$skip=${skip}&$top=${top}`
+    );
+  }
+
   createNews(news: NewsCreateDTO) {
     // status: 0 ACTIVE, 1 INACTIVE, 2 DRAFT
     const payload = {
@@ -216,5 +241,27 @@ export class NewsService {
 
   setFrontpageNews(newsItems: { id: number; slotNumber: number }[]) {
     return this.http.put(`${this.apiUrl}/api/news/frontpages`, newsItems);
+  }
+
+  /**
+   * Lấy thông tin tỷ số tài chính của cổ phiếu
+   * @param symbol Mã cổ phiếu (VD: HPG)
+   * @param period 'year' hoặc 'quarter'
+   */
+  getFinancialRatios(symbol: string, period: 'year' | 'quarter'): Observable<FinancialRatiosResponse> {
+    return this.http.get<FinancialRatiosResponse>(
+      `${this.apiUrl}/api/Stock/financeratios/${symbol}?period=${period}`
+    );
+  }
+
+  /**
+   * Lấy báo cáo thu nhập của cổ phiếu
+   * @param symbol Mã cổ phiếu (VD: HPG)
+   * @param period 'year' hoặc 'quarter'
+   */
+  getIncomeStatement(symbol: string, period: 'year' | 'quarter'): Observable<IncomeStatementResponse> {
+    return this.http.get<IncomeStatementResponse>(
+      `${this.apiUrl}/api/Stock/incomestatement/${symbol}?period=${period}`
+    );
   }
 }

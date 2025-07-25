@@ -7,16 +7,14 @@ import { AdBannerComponent } from '../shared/components/ad-banner/ad-banner.comp
 import { FastNewsComponent } from '../shared/components/fast-news/fast-news.component';
 import { StockIndexComponent } from '../shared/components/stock-index/stock-index.component';
 import { MarketSummaryComponent } from '../shared/components/market-summary/market-summary.component';
-import { SearchBoxComponent } from '../shared/components/search-box/search-box.component';
-import { MostReadComponent } from '../shared/components/most-read/most-read.component';
 import { FooterComponent } from '../shared/components/footer/footer.component';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
-  selector: 'app-main-layout',
+  selector: 'app-stock-layout',
   standalone: true,
-  styleUrl: './main-layout.component.css',
+  styleUrl: './stock-layout.component.css',
   imports: [
     CommonModule,
     RouterOutlet,
@@ -26,8 +24,6 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     FastNewsComponent,
     StockIndexComponent,
     MarketSummaryComponent,
-    SearchBoxComponent,
-    MostReadComponent,
     FooterComponent,
     NzLayoutModule,
     NzGridModule,
@@ -48,24 +44,13 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
         <app-main-nav></app-main-nav>
         <div class="container">
           <app-ad-banner></app-ad-banner>
-          <nz-row gutter="24">
-            <nz-col nzSpan="18">
-              <main style="min-height: 1000px; margin: 8px">
-                <router-outlet />
-              </main>
-            </nz-col>
-            <nz-col nzSpan="6">
-              <div class="sidebar-box">
-                <app-search-box></app-search-box>
-                <app-most-read></app-most-read>
-                <!-- <div class="ad-small">Quảng cáo nhỏ</div> -->
-              </div>
-            </nz-col>
-          </nz-row>
+          <main style="min-height: 1000px; margin: 8px">
+            <router-outlet />
+          </main>
         </div>
       </nz-content>
       <app-footer></app-footer>
     </nz-layout>
   `,
 })
-export class MainLayoutComponent {}
+export class StockLayoutComponent {}

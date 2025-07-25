@@ -109,3 +109,31 @@ nav a:hover {
 .header-search-bar {
   min-width: 500px;
 }
+
+/* Watchlist Button */
+.watchlist-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.watchlist-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.watchlist-text {
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .watchlist-text {
+    display: none;
+  }
+  
+  .watchlist-btn {
+    min-width: 32px;
+    padding: 4px 8px;
+  }
+}

@@ -31,8 +31,12 @@
         nzType="default"
         style="margin-right: 12px"
         *ngIf="isLoggedIn"
+        (click)="openWatchlist()"
+        nz-tooltip="Danh sách theo dõi"
+        class="watchlist-btn"
       >
-        Watch list
+        <span nz-icon nzType="heart" nzTheme="outline"></span>
+        <span class="watchlist-text">Watchlist</span>
       </button>
       <button
         nz-button
@@ -113,4 +117,10 @@
       </nz-dropdown-menu>
     </div>
   </div>
+
+  <!-- Watchlist Modal -->
+  <app-watchlist
+    [visible]="showWatchlist"
+    (visibleChange)="onWatchlistVisibleChange($event)">
+  </app-watchlist>
 </header>

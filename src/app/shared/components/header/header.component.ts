@@ -3,6 +3,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import { NewsService } from '../../../services/news.service';
@@ -12,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
+import { WatchlistComponent } from '../watchlist/watchlist.component';
 
 @Component({
   selector: 'app-header',
@@ -22,7 +24,9 @@ import { Subject } from 'rxjs';
     NzButtonModule,
     NzIconModule,
     NzDropDownModule,
+    NzToolTipModule,
     ReactiveFormsModule,
+    WatchlistComponent,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -34,6 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   showSuggestions = false;
   userRole: string | null = null;
+  showWatchlist = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -144,5 +149,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onRegister() {
     this.router.navigate(['/register']);
+  }
+
+  openWatchlist() {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.showWatchlist = true;
+  }
+
+  onWatchlistVisibleChange(visible: boolean) {
+    this.showWatchlist = visible;
   }
 }

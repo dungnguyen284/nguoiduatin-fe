@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layouts/main-layout.component';
+import { StockLayoutComponent } from './layouts/stock-layout.component';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout.component';
 import { HomeComponent } from './pages/home/home.component';
 import { CompanyComponent } from './pages/company/company.component';
 import { FinanceComponent } from './pages/finance/finance.component';
 import { StockComponent } from './pages/stock/stock.component';
+import { StockDetailComponent } from './pages/stock-detail/stock-detail.component';
 import { RealEstateComponent } from './pages/real-estate/real-estate.component';
 import { NewsDetailComponent } from './pages/news-detail/news-detail.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -25,6 +27,13 @@ import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.compone
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 export const routes: Routes = [
+  {
+    path: 'stock/:symbol',
+    component: StockLayoutComponent,
+    children: [
+      { path: '', component: StockDetailComponent },
+    ],
+  },
   {
     path: '',
     component: MainLayoutComponent,
