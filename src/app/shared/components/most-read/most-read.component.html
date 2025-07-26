@@ -1,14 +1,12 @@
 <div class="most-read-box">
   <h3>ĐỌC NHIỀU</h3>
-  
-  <div *ngIf="loading" class="loading">
-    Đang tải...
-  </div>
-  
+
+  <div *ngIf="loading" class="loading">Đang tải...</div>
+
   <div *ngIf="!loading && mostReadNews.length === 0" class="no-data">
     Không có tin tức
   </div>
-  
+
   <div *ngIf="!loading && mostReadNews.length > 0" class="news-list">
     <div *ngFor="let news of mostReadNews; let i = index" class="news-item">
       <div class="news-number">{{ i + 1 }}</div>

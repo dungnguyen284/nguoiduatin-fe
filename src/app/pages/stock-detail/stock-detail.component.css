@@ -214,30 +214,30 @@
   .stock-detail-container {
     padding: 16px;
   }
-  
+
   .main-content-layout {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .right-column {
     width: 100%;
   }
-  
+
   .stock-header-info {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .company-info {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .price-info {
     text-align: center;
   }
-  
+
   .current-price {
     font-size: 28px;
   }
@@ -251,7 +251,8 @@
   .officer-item {
     justify-content: center;
   }
-}.detail-row:last-child {
+}
+.detail-row:last-child {
   border-bottom: none;
 }
 
@@ -824,11 +825,11 @@
   .officers-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .officer-card {
     padding: 12px;
   }
-  
+
   .avatar-circle-large {
     width: 40px;
     height: 40px;
@@ -1040,7 +1041,7 @@
 .value-cell {
   text-align: right;
   padding: 8px 4px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   color: #262626;
   font-weight: 500;
 }
@@ -1050,7 +1051,7 @@
   .period-selection {
     flex-direction: column;
   }
-  
+
   .period-btn {
     min-width: auto;
     width: 100%;

@@ -43,7 +43,7 @@ export class MostReadComponent implements OnInit, OnDestroy {
 
   loadMostReadNews(categoryId: string | null): void {
     this.loading = true;
-    
+
     if (categoryId) {
       // Lấy tin đọc nhiều theo chuyên mục
       this.newsService.getNewsByCategoryPaged(categoryId, 0, 5, [0]).subscribe({
@@ -58,7 +58,7 @@ export class MostReadComponent implements OnInit, OnDestroy {
           console.error('Failed to load most read news by category:', err);
           this.mostReadNews = [];
           this.loading = false;
-        }
+        },
       });
     } else {
       // Lấy tin đọc nhiều tất cả chuyên mục
@@ -74,7 +74,7 @@ export class MostReadComponent implements OnInit, OnDestroy {
           console.error('Failed to load most read news:', err);
           this.mostReadNews = [];
           this.loading = false;
-        }
+        },
       });
     }
   }

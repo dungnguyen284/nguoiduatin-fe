@@ -10,7 +10,9 @@ import { CategoryCommunicationService } from '../../../services/category-communi
   styleUrl: './main-nav.component.css',
 })
 export class MainNavComponent {
-  constructor(private categoryCommunicationService: CategoryCommunicationService) {}
+  constructor(
+    private categoryCommunicationService: CategoryCommunicationService
+  ) {}
 
   onCategoryClick(categoryId: string | null): void {
     this.categoryCommunicationService.setSelectedCategory(categoryId);

@@ -15,7 +15,10 @@ import { StockChartComponent } from '../../shared/components/stock-chart/stock-c
 import { StockService } from '../../services/stock.service';
 import { NewsService } from '../../services/news.service';
 import { StockResponse, StockData } from '../../models/stock-response.model';
-import { FinancialRatiosResponse, IncomeStatementResponse } from '../../models/financial-data.model';
+import {
+  FinancialRatiosResponse,
+  IncomeStatementResponse,
+} from '../../models/financial-data.model';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -43,7 +46,7 @@ export class StockDetailComponent implements OnInit {
   loading = false;
   stockData: StockData | null = null;
   error: string | null = null;
-  
+
   // Financial data
   financialRatios: FinancialRatiosResponse | null = null;
   incomeStatement: IncomeStatementResponse | null = null;
@@ -51,7 +54,7 @@ export class StockDetailComponent implements OnInit {
   selectedPeriod: 'year' | 'quarter' = 'year';
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private stockService: StockService,
     private newsService: NewsService
@@ -67,10 +70,10 @@ export class StockDetailComponent implements OnInit {
 
   loadStockData() {
     if (!this.stockSymbol) return;
-    
+
     this.loading = true;
     this.error = null;
-    
+
     this.stockService.getStockBySymbol(this.stockSymbol).subscribe({
       next: (response: StockResponse) => {
         this.stockData = response.data;
@@ -83,33 +86,45 @@ export class StockDetailComponent implements OnInit {
         this.error = 'Không thể tải thông tin cổ phiếu';
         this.loading = false;
         console.error('Error loading stock data:', error);
-      }
+      },
     });
   }
 
   loadFinancialData() {
     if (!this.stockSymbol) return;
-    
+
     this.financialLoading = true;
-    
+
     // Load both financial ratios and income statement in parallel
     forkJoin({
-      ratios: this.newsService.getFinancialRatios(this.stockSymbol, this.selectedPeriod),
-      incomeStatement: this.newsService.getIncomeStatement(this.stockSymbol, this.selectedPeriod)
+      ratios: this.newsService.getFinancialRatios(
+        this.stockSymbol,
+        this.selectedPeriod
+      ),
+      incomeStatement: this.newsService.getIncomeStatement(
+        this.stockSymbol,
+        this.selectedPeriod
+      ),
     }).subscribe({
       next: (data) => {
         this.financialRatios = data.ratios;
         this.incomeStatement = data.incomeStatement;
         this.financialLoading = false;
         console.log('Financial data loaded:', data);
-        console.log('Financial ratios records:', this.financialRatios?.data?.records);
-        console.log('Income statement records:', this.incomeStatement?.data?.records);
+        console.log(
+          'Financial ratios records:',
+          this.financialRatios?.data?.records
+        );
+        console.log(
+          'Income statement records:',
+          this.incomeStatement?.data?.records
+        );
       },
       error: (error) => {
         console.error('Error loading financial data:', error);
         this.financialLoading = false;
         // Don't show error to user, just log it since financial data is supplementary
-      }
+      },
     });
   }
 
@@ -162,33 +177,42 @@ export class StockDetailComponent implements OnInit {
     if (words.length === 1) {
       return words[0].charAt(0).toUpperCase();
     }
-    return words[0].charAt(0).toUpperCase() + words[words.length - 1].charAt(0).toUpperCase();
+    return (
+      words[0].charAt(0).toUpperCase() +
+      words[words.length - 1].charAt(0).toUpperCase()
+    );
   }
 
   // Get latest historical record
   getLatestRecord() {
-    if (!this.stockData?.historical?.records || this.stockData.historical.records.length === 0) {
+    if (
+      !this.stockData?.historical?.records ||
+      this.stockData.historical.records.length === 0
+    ) {
       return null;
     }
-    
+
     // Sort by date and get the latest record
-    const sortedRecords = [...this.stockData.historical.records].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+    const sortedRecords = [...this.stockData.historical.records].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    
+
     return sortedRecords[0];
   }
 
   // Get previous day record for comparison
   getPreviousRecord() {
-    if (!this.stockData?.historical?.records || this.stockData.historical.records.length < 2) {
+    if (
+      !this.stockData?.historical?.records ||
+      this.stockData.historical.records.length < 2
+    ) {
       return null;
     }
-    
-    const sortedRecords = [...this.stockData.historical.records].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+
+    const sortedRecords = [...this.stockData.historical.records].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    
+
     return sortedRecords[1]; // Previous day
   }
 
@@ -196,9 +220,9 @@ export class StockDetailComponent implements OnInit {
   getHistoricalPriceChange(): number {
     const latest = this.getLatestRecord();
     const previous = this.getPreviousRecord();
-    
+
     if (!latest || !previous) return 0;
-    
+
     return latest.close - previous.close;
   }
 
@@ -206,9 +230,9 @@ export class StockDetailComponent implements OnInit {
   getHistoricalPriceChangePercent(): number {
     const latest = this.getLatestRecord();
     const previous = this.getPreviousRecord();
-    
+
     if (!latest || !previous || previous.close === 0) return 0;
-    
+
     return ((latest.close - previous.close) / previous.close) * 100;
   }
 
@@ -258,17 +282,17 @@ export class StockDetailComponent implements OnInit {
 
   formatRatioValue(value: number | null): string {
     if (value === null || value === undefined) return 'N/A';
-    
+
     // Đối với EPS và BVPS có thể là số lớn, format khác với các tỷ số thông thường
     if (Math.abs(value) >= 1000000) {
       return this.formatLargeNumber(value);
     }
-    
+
     // Đối với các tỷ số thông thường (P/E, P/B, etc.)
     if (Math.abs(value) >= 100) {
       return value.toFixed(1).replace('.', ',');
     }
-    
+
     return value.toFixed(2).replace('.', ',');
   }
 
@@ -286,13 +310,13 @@ export class StockDetailComponent implements OnInit {
 
   formatLargeNumber(value: number | null): string {
     if (value === null || value === undefined || value === 0) return 'N/A';
-    
+
     // Xử lý các số âm
     const isNegative = value < 0;
     const absValue = Math.abs(value);
-    
+
     let result = '';
-    
+
     // Convert to nghìn tỷ (thousand billions) for extremely large numbers (>= 1000 tỷ)
     if (absValue >= 1000000000000000) {
       const nghintys = absValue / 1000000000000000;
@@ -312,11 +336,10 @@ export class StockDetailComponent implements OnInit {
     else if (absValue >= 1000000) {
       const thousands = absValue / 1000000;
       result = thousands.toFixed(0).replace('.', ',') + ' ng';
-    }
-    else {
+    } else {
       result = absValue.toLocaleString('vi-VN');
     }
-    
+
     return isNegative ? '-' + result : result;
   }
 }

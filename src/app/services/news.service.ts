@@ -4,7 +4,10 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { NewsResponseDTO } from '../models/news-response.model';
 import { NewsCreateDTO } from '../models/news-create.dto';
-import { FinancialRatiosResponse, IncomeStatementResponse } from '../models/financial-data.model';
+import {
+  FinancialRatiosResponse,
+  IncomeStatementResponse,
+} from '../models/financial-data.model';
 
 @Injectable({
   providedIn: 'root',
@@ -248,7 +251,10 @@ export class NewsService {
    * @param symbol Mã cổ phiếu (VD: HPG)
    * @param period 'year' hoặc 'quarter'
    */
-  getFinancialRatios(symbol: string, period: 'year' | 'quarter'): Observable<FinancialRatiosResponse> {
+  getFinancialRatios(
+    symbol: string,
+    period: 'year' | 'quarter'
+  ): Observable<FinancialRatiosResponse> {
     return this.http.get<FinancialRatiosResponse>(
       `${this.apiUrl}/api/Stock/financeratios/${symbol}?period=${period}`
     );
@@ -259,7 +265,10 @@ export class NewsService {
    * @param symbol Mã cổ phiếu (VD: HPG)
    * @param period 'year' hoặc 'quarter'
    */
-  getIncomeStatement(symbol: string, period: 'year' | 'quarter'): Observable<IncomeStatementResponse> {
+  getIncomeStatement(
+    symbol: string,
+    period: 'year' | 'quarter'
+  ): Observable<IncomeStatementResponse> {
     return this.http.get<IncomeStatementResponse>(
       `${this.apiUrl}/api/Stock/incomestatement/${symbol}?period=${period}`
     );

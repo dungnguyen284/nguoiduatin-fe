@@ -81,7 +81,7 @@ export class SearchModalComponent implements OnInit, OnDestroy {
   setupSearchSubscription() {
     // Unsubscribe previous search subscription
     this.searchDestroy$.next();
-    
+
     this.searchControl.valueChanges
       .pipe(
         debounceTime(300),
@@ -91,7 +91,7 @@ export class SearchModalComponent implements OnInit, OnDestroy {
             console.log('Keyword too short or empty'); // Debug log
             return [];
           }
-          
+
           console.log('Search type:', this.searchType); // Debug log
           if (this.searchType === 'news') {
             console.log('Searching news...'); // Debug log
@@ -120,7 +120,7 @@ export class SearchModalComponent implements OnInit, OnDestroy {
           console.error('Search error:', error);
           this.suggestions = [];
           this.showSuggestions = false;
-        }
+        },
       });
   }
 
@@ -190,7 +190,7 @@ export class SearchModalComponent implements OnInit, OnDestroy {
   onSearch(): void {
     const keyword = this.searchControl.value?.trim();
     if (!keyword) return;
-    
+
     this.dialogRef.close();
     if (this.searchType === 'news') {
       this.router.navigate(['/'], { queryParams: { search: keyword } });

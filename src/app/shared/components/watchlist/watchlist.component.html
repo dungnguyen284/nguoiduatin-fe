@@ -1,197 +1,37 @@
 <nz-modal
   [(nzVisible)]="visible"
-  (nzVisibleChange)="onVisibleChange($event)"
-  nzTitle="Danh sách cổ phiếu theo dõi"
-  nzWidth="600px"
+  nzTitle="Danh sách theo dõi"
+  (nzOnCancel)="handleCancel()"
   [nzFooter]="null"
-  [nzBodyStyle]="{ padding: '16px' }"
-  [nzMaskClosable]="true"
-  [nzKeyboard]="true"
-  (nzOnCancel)="closeModal()"
+  [nzWidth]="800"
 >
-  <!-- Add Stock Section -->
-  <div class="add-stock-section">
-    <div class="add-stock-header">
-      <h4>Thêm cổ phiếu mới</h4>
-      <nz-tag [nzColor]="watchlist.length >= maxWatchlistSize ? 'red' : 'blue'">
-        {{ watchlist.length }}/{{ maxWatchlistSize }}
-      </nz-tag>
-    </div>
-
-    <div class="add-stock-form">
-      <div class="search-container">
-        <nz-select
-          nzShowSearch
-          nzAllowClear
-          nzPlaceHolder="Tìm kiếm cổ phiếu (VD: HPG, VIC)"
-          [(ngModel)]="searchTerm"
-          (nzOnSearch)="onSearchChange($event)"
-          (ngModelChange)="onSelectChange($event)"
-          [nzLoading]="searchLoading"
-          [nzDisabled]="watchlist.length >= maxWatchlistSize"
-          nzDropdownClassName="stock-search-dropdown"
-          style="width: 100%; margin-bottom: 8px"
-        >
-          <nz-option
-            *ngFor="let stock of searchResults"
-            [nzValue]="stock.code"
-            [nzLabel]="stock.code + ' - ' + stock.name"
-            [nzDisabled]="isStockInWatchlist(stock.code)"
-          >
-            <div class="search-result-item" (click)="onSelectStock(stock)">
-              <div class="stock-code">{{ stock.code }}</div>
-              <div class="stock-name">{{ stock.name }}</div>
-              <div class="stock-exchange" *ngIf="stock.exchange">
-                {{ stock.exchange }}
-              </div>
-              <nz-tag
-                *ngIf="isStockInWatchlist(stock.code)"
-                nzColor="orange"
-                nzSize="small"
-              >
-                Đã theo dõi
-              </nz-tag>
-            </div>
-          </nz-option>
-        </nz-select>
-
-        <div
-          class="search-help"
-          *ngIf="searchTerm.length > 0 && searchTerm.length < 2"
-        >
-          <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-          Nhập ít nhất 2 ký tự để tìm kiếm
-        </div>
-
-        <div
-          class="no-results"
-          *ngIf="
-            searchTerm.length >= 2 &&
-            searchResults.length === 0 &&
-            !searchLoading
-          "
-        >
-          <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
-          Không tìm thấy cổ phiếu nào
-        </div>
-      </div>
-
-      <!-- Alternative manual input -->
-      <div class="manual-input">
-        <nz-input-group [nzSuffix]="addButton">
-          <input
-            nz-input
-            placeholder="Hoặc nhập trực tiếp mã cổ phiếu"
-            [(ngModel)]="newStockCode"
-            (keyup.enter)="onEnterPressed()"
-            [disabled]="addingStock || watchlist.length >= maxWatchlistSize"
-            style="text-transform: uppercase"
-          />
-        </nz-input-group>
-        <ng-template #addButton>
-          <button
-            nz-button
-            nzType="primary"
-            nzSize="small"
-            [nzLoading]="addingStock"
-            [disabled]="
-              !newStockCode.trim() || watchlist.length >= maxWatchlistSize
-            "
-            (click)="addStock()"
-          >
-            <span nz-icon nzType="plus" nzTheme="outline"></span>
-            Thêm
-          </button>
-        </ng-template>
-      </div>
-    </div>
-
-    <div class="help-text" *ngIf="watchlist.length >= maxWatchlistSize">
-      <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-      Bạn đã đạt giới hạn tối đa {{ maxWatchlistSize }} cổ phiếu. Vui lòng xóa
-      bớt để thêm mới.
-    </div>
-  </div>
-
-  <nz-divider></nz-divider>
-
-  <!-- Watchlist Items -->
-  <div class="watchlist-content">
-    <div *ngIf="loading" class="loading-container">
-      <div class="loading-spinner">
-        <span nz-icon nzType="loading" nzTheme="outline"></span>
-        Đang tải...
-      </div>
-    </div>
-
-    <div *ngIf="!loading && watchlist.length === 0" class="empty-container">
-      <nz-empty
-        nzNotFoundContent="Chưa có cổ phiếu nào trong danh sách theo dõi"
-        nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-      >
-        <span nz-empty-footer>
-          <button nz-button nzType="primary" nzSize="small">
-            <span nz-icon nzType="plus" nzTheme="outline"></span>
-            Thêm cổ phiếu đầu tiên
-          </button>
-        </span>
-      </nz-empty>
-    </div>
-
-    <nz-list
-      *ngIf="!loading && watchlist.length > 0"
-      [nzDataSource]="watchlist"
-      nzBordered
-    >
-      <nz-list-item *ngFor="let item of watchlist">
-        <div class="watchlist-item">
-          <div class="stock-info">
-            <div class="stock-code">{{ item.code }}</div>
-            <div class="stock-name">
-              {{ item.stock?.name || "Đang cập nhật..." }}
-            </div>
-            <div class="added-date">
-              Thêm: {{ item.addedDate | date : "dd/MM/yyyy HH:mm" }}
-            </div>
-          </div>
-
-          <div class="price-info" *ngIf="item.stock">
-            <div class="current-price">
-              {{ formatPrice(item.stock.currentPrice) }}
-            </div>
-            <div
-              class="price-change"
-              [style.color]="getPriceChangeColor(item.stock.priceChange)"
-            >
-              {{
-                formatPriceChange(
-                  item.stock.priceChange,
-                  item.stock.priceChangePercent
-                )
-              }}
-            </div>
-          </div>
-
-          <div class="price-info" *ngIf="!item.stock">
-            <div class="current-price">--</div>
-            <div class="price-change">--</div>
-          </div>
-
-          <div class="actions">
-            <button
-              nz-button
-              nzType="text"
-              nzDanger
-              nzSize="small"
-              [nzLoading]="removingStockId === item.id"
-              (click)="removeStock(item)"
-              nz-tooltip="Xóa khỏi danh sách"
-            >
-              <span nz-icon nzType="delete" nzTheme="outline"></span>
-            </button>
-          </div>
-        </div>
-      </nz-list-item>
-    </nz-list>
-  </div>
+  <ng-container *ngIf="stocks.length === 0">
+    <div class="empty">Bạn chưa có mã nào trong danh sách theo dõi.</div>
+  </ng-container>
+  <ng-container>
+    <table class="watchlist-table">
+      <thead>
+        <tr>
+          <th>Mã</th>
+          <th>Tên công ty</th>
+          <th>Sàn</th>
+          <th>Giá khớp</th>
+          <th>Thay đổi</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stock of stocks">
+          <td>{{ stock.symbol }}</td>
+          <td>{{ stock.organName }}</td>
+          <td>{{ stock.exchange }}</td>
+          <td>{{ stock.matchPrice | number : "1.0-2" }}</td>
+          <td>
+            {{ stock.matchPrice - stock.referencePrice | number : "1.0-2" }}
+          </td>
+          <td>{{ stock.tradingStatus }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
 </nz-modal>

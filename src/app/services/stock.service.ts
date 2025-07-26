@@ -27,23 +27,10 @@ export interface WatchlistRequest {
 }
 
 export interface WatchlistResponse {
-  data: WatchlistItem[];
+  data: string[];
   statusCode: number;
   isSuccess: boolean;
   message: string;
-}
-
-export interface WatchlistItem {
-  id: string;
-  code: string;
-  userId: string;
-  addedDate: string;
-  stock?: {
-    name: string;
-    currentPrice: number;
-    priceChange: number;
-    priceChangePercent: number;
-  };
 }
 
 export interface StockSearchResponse {
@@ -58,6 +45,72 @@ export interface StockSearchItem {
   name: string;
   exchange?: string;
   industry?: string;
+}
+
+// Price Board interfaces
+export interface PriceBoardRequest {
+  symbols: string[];
+}
+
+export interface PriceBoardRecord {
+  symbol: string;
+  ceiling: number;
+  floor: number;
+  refPrice: number;
+  stockType: string;
+  exchange: string;
+  tradingStatus: string;
+  securityStatus: string;
+  lastTradingDate: string;
+  listedShare: number;
+  sendingTime: string;
+  organName: string;
+  mappingSymbol: string;
+  productGrpId: string;
+  partition: number;
+  tradingDate: string;
+  accumulatedValue: number;
+  accumulatedVolume: number;
+  avgMatchPrice: number;
+  currentRoom: number;
+  foreignBuyVolume: number;
+  foreignSellVolume: number;
+  foreignBuyValue: number;
+  foreignSellValue: number;
+  highest: number;
+  lowest: number;
+  matchPrice: number;
+  matchType: string;
+  matchVol: number;
+  totalRoom: number;
+  totalBuyOrders: number;
+  totalSellOrders: number;
+  bidCount: number;
+  askCount: number;
+  referencePrice: number;
+  bid1Price: number;
+  bid1Volume: number;
+  bid2Price: number;
+  bid2Volume: number;
+  bid3Price: number;
+  bid3Volume: number;
+  ask1Price: number;
+  ask1Volume: number;
+  ask2Price: number;
+  ask2Volume: number;
+  ask3Price: number;
+  ask3Volume: number;
+}
+
+export interface PriceBoardData {
+  records: PriceBoardRecord[];
+}
+
+export interface PriceBoardResponse {
+  data: PriceBoardData;
+  statusCode: number;
+  isSuccess: boolean;
+  message: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -115,14 +168,18 @@ export class StockService {
   }
 
   getStockBySymbol(symbol: string): Observable<StockResponse> {
-    return this.http.get<StockResponse>(`${this.apiUrl}/api/stock/${symbol}`).pipe(
-      map((response) => {
-        if (response.isSuccess && response.statusCode === 200) {
-          return response;
-        }
-        throw new Error(response.message || 'Không thể lấy thông tin cổ phiếu');
-      })
-    );
+    return this.http
+      .get<StockResponse>(`${this.apiUrl}/api/stock/${symbol}`)
+      .pipe(
+        map((response) => {
+          if (response.isSuccess && response.statusCode === 200) {
+            return response;
+          }
+          throw new Error(
+            response.message || 'Không thể lấy thông tin cổ phiếu'
+          );
+        })
+      );
   }
 
   createStock(stockData: StockCreateDto): Observable<any> {
@@ -168,7 +225,9 @@ export class StockService {
    */
   getWatchlist(userId: string): Observable<WatchlistResponse> {
     console.log('Getting watchlist for user:', userId);
-    return this.http.get<WatchlistResponse>(`${this.apiUrl}/api/Stock/watchlist/${userId}`);
+    return this.http
+      .get<WatchlistResponse>(`${this.apiUrl}/api/Stock/watchlist/${userId}`)
+      .pipe(map((response) => response || []));
   }
 
   /**
@@ -194,6 +253,18 @@ export class StockService {
     console.log('Searching stocks with query:', query);
     return this.http.get<StockSearchResponse>(
       `${this.apiUrl}/api/Stock/search?q=${encodeURIComponent(query)}`
+    );
+  }
+
+  /**
+   * Lấy thông tin bảng giá cho danh sách cổ phiếu
+   */
+  getPriceBoard(symbols: string[]): Observable<PriceBoardResponse> {
+    console.log('Getting price board for symbols:', symbols);
+    const request: PriceBoardRequest = { symbols };
+    return this.http.post<PriceBoardResponse>(
+      `${this.apiUrl}/api/Stock/priceboard`,
+      request
     );
   }
 }

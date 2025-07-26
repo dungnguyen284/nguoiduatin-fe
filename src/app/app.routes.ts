@@ -30,9 +30,7 @@ export const routes: Routes = [
   {
     path: 'stock/:symbol',
     component: StockLayoutComponent,
-    children: [
-      { path: '', component: StockDetailComponent },
-    ],
+    children: [{ path: '', component: StockDetailComponent }],
   },
   {
     path: '',

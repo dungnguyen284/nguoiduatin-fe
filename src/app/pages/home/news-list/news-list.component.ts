@@ -42,14 +42,14 @@ export class NewsListComponent implements OnInit, OnDestroy {
   private routeSubscription: Subscription = new Subscription();
 
   constructor(
-    private newsService: NewsService, 
+    private newsService: NewsService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     // Subscribe to query params to detect tag changes
-    this.routeSubscription = this.route.queryParams.subscribe(params => {
+    this.routeSubscription = this.route.queryParams.subscribe((params) => {
       const newTag = params['tag'] || null;
       if (newTag !== this.selectedTag) {
         this.selectedTag = newTag;
@@ -76,11 +76,16 @@ export class NewsListComponent implements OnInit, OnDestroy {
   loadMore() {
     if (this.loading || this.allLoaded) return;
     this.loading = true;
-    
+
     if (this.selectedTag) {
       // Load news with tag filter
       this.newsService
-        .searchNewsByTag(this.selectedTag, this.page * this.pageSize, this.pageSize, 0)
+        .searchNewsByTag(
+          this.selectedTag,
+          this.page * this.pageSize,
+          this.pageSize,
+          0
+        )
         .subscribe((response) => {
           const news = response.data || [];
           this.newsList = [...this.newsList, ...news];

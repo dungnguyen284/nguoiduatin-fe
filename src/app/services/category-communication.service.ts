@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CategoryCommunicationService {
   private selectedCategorySubject = new BehaviorSubject<string | null>(null);
-  
-  constructor() { }
+
+  constructor() {}
 
   // Observable để các component khác có thể subscribe
   getSelectedCategory(): Observable<string | null> {

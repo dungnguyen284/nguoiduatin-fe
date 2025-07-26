@@ -168,17 +168,21 @@
                   <div class="finance-section">
                     <!-- Period Selection -->
                     <div class="period-selection">
-                      <button 
-                        nz-button 
-                        [nzType]="selectedPeriod === 'year' ? 'primary' : 'default'"
+                      <button
+                        nz-button
+                        [nzType]="
+                          selectedPeriod === 'year' ? 'primary' : 'default'
+                        "
                         (click)="onPeriodChange('year')"
                         class="period-btn"
                       >
                         Xem theo năm
                       </button>
-                      <button 
-                        nz-button 
-                        [nzType]="selectedPeriod === 'quarter' ? 'primary' : 'default'"
+                      <button
+                        nz-button
+                        [nzType]="
+                          selectedPeriod === 'quarter' ? 'primary' : 'default'
+                        "
                         (click)="onPeriodChange('quarter')"
                         class="period-btn"
                       >
@@ -188,72 +192,166 @@
 
                     <div *ngIf="financialLoading" class="financial-loading">
                       <nz-spin nzSpinning="true">
-                        <div style="height: 200px;"></div>
+                        <div style="height: 200px"></div>
                       </nz-spin>
                     </div>
 
                     <div *ngIf="!financialLoading" class="financial-data">
                       <!-- Thông báo khi không có dữ liệu -->
-                      <div *ngIf="(!financialRatios || !financialRatios.data || !financialRatios.data.records || financialRatios.data.records.length === 0) && (!incomeStatement || !incomeStatement.data || !incomeStatement.data.records || incomeStatement.data.records.length === 0)" class="no-financial-data">
-                        <nz-empty nzNotFoundContent="Không có dữ liệu tài chính cho mã CK này"></nz-empty>
+                      <div
+                        *ngIf="
+                          (!financialRatios ||
+                            !financialRatios.data ||
+                            !financialRatios.data.records ||
+                            financialRatios.data.records.length === 0) &&
+                          (!incomeStatement ||
+                            !incomeStatement.data ||
+                            !incomeStatement.data.records ||
+                            incomeStatement.data.records.length === 0)
+                        "
+                        class="no-financial-data"
+                      >
+                        <nz-empty
+                          nzNotFoundContent="Không có dữ liệu tài chính cho mã CK này"
+                        ></nz-empty>
                       </div>
 
                       <!-- Chỉ số tài chính chính -->
-                      <div class="financial-section" *ngIf="financialRatios && financialRatios.data && financialRatios.data.records && financialRatios.data.records.length > 0">
-                        <h4 class="financial-section-title">Chỉ số tài chính chính</h4>
+                      <div
+                        class="financial-section"
+                        *ngIf="
+                          financialRatios &&
+                          financialRatios.data &&
+                          financialRatios.data.records &&
+                          financialRatios.data.records.length > 0
+                        "
+                      >
+                        <h4 class="financial-section-title">
+                          Chỉ số tài chính chính
+                        </h4>
                         <div class="financial-table">
                           <div class="table-header">
                             <div class="header-cell metric-header"></div>
-                            <div class="header-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
-                              {{ ratio.quarter === 0 ? 'Năm ' + ratio.year : formatPeriod(ratio.year, ratio.quarter) }}
+                            <div
+                              class="header-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
+                              {{
+                                ratio.quarter === 0
+                                  ? "Năm " + ratio.year
+                                  : formatPeriod(ratio.year, ratio.quarter)
+                              }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">EPS (VNĐ)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.eps) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">BVPS (VNĐ)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatLargeNumber(ratio.bvps) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">P/E</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.peRatio) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">P/B</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.pbRatio) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">ROE (%)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatPercentValue(ratio.roe) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">ROA (%)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatPercentValue(ratio.roa) }}
                             </div>
                           </div>
 
                           <div class="table-row">
-                            <div class="metric-cell">Biên lợi nhuận ròng (%)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div class="metric-cell">
+                              Biên lợi nhuận ròng (%)
+                            </div>
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatPercentValue(ratio.netProfitMargin) }}
                             </div>
                           </div>
@@ -261,47 +359,109 @@
                       </div>
 
                       <!-- Thông tin thị trường -->
-                      <div class="financial-section" *ngIf="financialRatios && financialRatios.data && financialRatios.data.records && financialRatios.data.records.length > 0">
-                        <h4 class="financial-section-title">Thông tin thị trường</h4>
+                      <div
+                        class="financial-section"
+                        *ngIf="
+                          financialRatios &&
+                          financialRatios.data &&
+                          financialRatios.data.records &&
+                          financialRatios.data.records.length > 0
+                        "
+                      >
+                        <h4 class="financial-section-title">
+                          Thông tin thị trường
+                        </h4>
                         <div class="financial-table">
                           <div class="table-header">
                             <div class="header-cell metric-header"></div>
-                            <div class="header-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
-                              {{ ratio.quarter === 0 ? 'Năm ' + ratio.year : formatPeriod(ratio.year, ratio.quarter) }}
+                            <div
+                              class="header-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
+                              {{
+                                ratio.quarter === 0
+                                  ? "Năm " + ratio.year
+                                  : formatPeriod(ratio.year, ratio.quarter)
+                              }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Vốn hóa thị trường</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatLargeNumber(ratio.marketCapital) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Số CP lưu hành</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatLargeNumber(ratio.outstandingShares) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">P/S</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.psRatio) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">P/Cash Flow</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.pCashFlow) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Tỷ suất cổ tức (%)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatPercentValue(ratio.dividendYield) }}
                             </div>
                           </div>
@@ -309,47 +469,111 @@
                       </div>
 
                       <!-- Cấu trúc tài chính -->
-                      <div class="financial-section" *ngIf="financialRatios && financialRatios.data && financialRatios.data.records && financialRatios.data.records.length > 0">
-                        <h4 class="financial-section-title">Cấu trúc tài chính</h4>
+                      <div
+                        class="financial-section"
+                        *ngIf="
+                          financialRatios &&
+                          financialRatios.data &&
+                          financialRatios.data.records &&
+                          financialRatios.data.records.length > 0
+                        "
+                      >
+                        <h4 class="financial-section-title">
+                          Cấu trúc tài chính
+                        </h4>
                         <div class="financial-table">
                           <div class="table-header">
                             <div class="header-cell metric-header"></div>
-                            <div class="header-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
-                              {{ ratio.quarter === 0 ? 'Năm ' + ratio.year : formatPeriod(ratio.year, ratio.quarter) }}
+                            <div
+                              class="header-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
+                              {{
+                                ratio.quarter === 0
+                                  ? "Năm " + ratio.year
+                                  : formatPeriod(ratio.year, ratio.quarter)
+                              }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Nợ/VCSH</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.debtToEquity) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">TS cố định/VCSH</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.fixedAssetToEquity) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">VCSH/VĐL</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
-                              {{ formatRatioValue(ratio.equityToCharterCapital) }}
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
+                              {{
+                                formatRatioValue(ratio.equityToCharterCapital)
+                              }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Đòn bẩy tài chính</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatRatioValue(ratio.financialLeverage) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">ROIC (%)</div>
-                            <div class="value-cell" *ngFor="let ratio of financialRatios.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let ratio of financialRatios.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatPercentValue(ratio.roic) }}
                             </div>
                           </div>
@@ -357,41 +581,104 @@
                       </div>
 
                       <!-- Báo cáo thu nhập (nếu có) -->
-                      <div class="financial-section" *ngIf="incomeStatement && incomeStatement.data && incomeStatement.data.records && incomeStatement.data.records.length > 0">
-                        <h4 class="financial-section-title">Kết quả kinh doanh</h4>
+                      <div
+                        class="financial-section"
+                        *ngIf="
+                          incomeStatement &&
+                          incomeStatement.data &&
+                          incomeStatement.data.records &&
+                          incomeStatement.data.records.length > 0
+                        "
+                      >
+                        <h4 class="financial-section-title">
+                          Kết quả kinh doanh
+                        </h4>
                         <div class="financial-table">
                           <div class="table-header">
                             <div class="header-cell metric-header"></div>
-                            <div class="header-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
-                              {{ statement.quarter === 0 ? 'Năm ' + statement.year : formatPeriod(statement.year, statement.quarter) }}
+                            <div
+                              class="header-cell"
+                              *ngFor="
+                                let statement of incomeStatement.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
+                              {{
+                                statement.quarter === 0
+                                  ? "Năm " + statement.year
+                                  : formatPeriod(
+                                      statement.year,
+                                      statement.quarter
+                                    )
+                              }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Doanh thu thuần</div>
-                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let statement of incomeStatement.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatLargeNumber(statement.revenue) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Lợi nhuận trước thuế</div>
-                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let statement of incomeStatement.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatLargeNumber(statement.netProfit) }}
                             </div>
                           </div>
-                          
+
                           <div class="table-row">
                             <div class="metric-cell">Lợi nhuận sau thuế</div>
-                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let statement of incomeStatement.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
                               {{ formatLargeNumber(statement.profitAfterTax) }}
                             </div>
                           </div>
 
                           <div class="table-row">
-                            <div class="metric-cell">LNST của cổ đông công ty mẹ</div>
-                            <div class="value-cell" *ngFor="let statement of incomeStatement.data.records.slice(0, 4)">
-                              {{ formatLargeNumber(statement.profitAttributableToParent) }}
+                            <div class="metric-cell">
+                              LNST của cổ đông công ty mẹ
+                            </div>
+                            <div
+                              class="value-cell"
+                              *ngFor="
+                                let statement of incomeStatement.data.records.slice(
+                                  0,
+                                  4
+                                )
+                              "
+                            >
+                              {{
+                                formatLargeNumber(
+                                  statement.profitAttributableToParent
+                                )
+                              }}
                             </div>
                           </div>
                         </div>

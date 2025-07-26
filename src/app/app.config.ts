@@ -13,11 +13,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {
   provideHttpClient,
   withInterceptorsFromDi,
+  withFetch,
 } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
-  return sessionStorage.getItem('jwt_token');
+  if (typeof window !== 'undefined' && window.sessionStorage) {
+    return sessionStorage.getItem('jwt_token');
+  }
+  return null;
 }
 
 registerLocaleData(en);
@@ -46,6 +50,6 @@ export const appConfig: ApplicationConfig = {
         },
       })
     ),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
   ],
 };

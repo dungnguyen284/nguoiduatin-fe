@@ -1,0 +1,178 @@
+<div class="stock-detail-container">
+  <div class="stock-header">
+    <button nz-button nzType="link" (click)="goBack()">
+      <span nz-icon nzType="arrow-left" nzTheme="outline"></span>
+      Quay lại
+    </button>
+    <h1 class="stock-title">{{ stockSymbol }}</h1>
+  </div>
+
+  <nz-spin [nzSpinning]="loading">
+    <!-- Error State -->
+    <nz-card *ngIf="error && !loading" nzTitle="Lỗi">
+      <div class="error-message">
+        <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
+        {{ error }}
+        <button
+          nz-button
+          nzType="primary"
+          (click)="loadStockData()"
+          style="margin-left: 8px"
+        >
+          Thử lại
+        </button>
+      </div>
+    </nz-card>
+
+    <!-- Stock Data -->
+    <div *ngIf="stockData && !loading">
+      <!-- Stock Header Info -->
+      <nz-card class="stock-info-card">
+        <div class="stock-header-info">
+          <div class="company-info">
+            <img
+              *ngIf="stockData.stock.logoUrl"
+              [src]="stockData.stock.logoUrl"
+              [alt]="stockData.stock.name"
+              class="company-logo"
+            />
+            <div class="company-details">
+              <h1 class="company-name">{{ stockData.stock.name }}</h1>
+              <h2 class="stock-code">{{ stockData.stock.code }} - HOSE</h2>
+            </div>
+          </div>
+
+          <div class="price-info">
+            <div
+              class="current-price"
+              [style.color]="getHistoricalPriceChangeColor()"
+            >
+              {{ getLatestRecord()?.close?.toLocaleString('vi-VN') || 'N/A' }}
+            </div>
+            <div
+              class="price-change"
+              [style.color]="getHistoricalPriceChangeColor()"
+            >
+              <span
+                nz-icon
+                [nzType]="getHistoricalPriceChange() >= 0 ? 'arrow-up' : 'arrow-down'"
+              ></span>
+              {{ getHistoricalPriceChange().toLocaleString('vi-VN') }} ({{
+              getHistoricalPriceChangePercent().toFixed(2) }}%)
+            </div>
+            <div class="update-time">Cập nhật: {{ getCurrentTime() }}</div>
+          </div>
+        </div>
+
+        <!-- Trading Stats from Latest Historical Data -->
+        <nz-divider></nz-divider>
+        <div nz-row [nzGutter]="16" *ngIf="getLatestRecord()">
+          <div nz-col nzSpan="6">
+            <nz-statistic
+              nzTitle="Giá mở cửa"
+              [nzValue]="getLatestRecord()!.open"
+              nzSuffix="VND"
+            >
+            </nz-statistic>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-statistic
+              nzTitle="Giá đóng cửa"
+              [nzValue]="getLatestRecord()!.close"
+              nzSuffix="VND"
+            >
+            </nz-statistic>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-statistic
+              nzTitle="Cao nhất"
+              [nzValue]="getLatestRecord()!.high"
+              nzSuffix="VND"
+              [nzValueStyle]="{ color: '#cf1322' }"
+            >
+            </nz-statistic>
+          </div>
+          <div nz-col nzSpan="6">
+            <nz-statistic
+              nzTitle="Thấp nhất"
+              [nzValue]="getLatestRecord()!.low"
+              nzSuffix="VND"
+              [nzValueStyle]="{ color: '#389e0d' }"
+            >
+            </nz-statistic>
+          </div>
+        </div>
+
+        <!-- Volume Information -->
+        <div
+          nz-row
+          [nzGutter]="16"
+          style="margin-top: 16px"
+          *ngIf="getLatestRecord()"
+        >
+          <div nz-col nzSpan="8">
+            <nz-statistic
+              nzTitle="Khối lượng"
+              [nzValue]="getLatestRecord()!.volume"
+              nzSuffix="CP"
+            >
+            </nz-statistic>
+          </div>
+          <div nz-col nzSpan="8">
+            <nz-statistic
+              nzTitle="Ngày giao dịch"
+              [nzValue]="formatRecordDate(getLatestRecord()!.date)"
+              nzSuffix=""
+            >
+            </nz-statistic>
+          </div>
+          <div nz-col nzSpan="8">
+            <nz-statistic
+              nzTitle="Biến động"
+              [nzValue]="getHistoricalPriceChange()"
+              nzSuffix="VND"
+              [nzValueStyle]="{ color: getHistoricalPriceChangeColor() }"
+            >
+            </nz-statistic>
+          </div>
+        </div>
+      </nz-card>
+
+      <!-- Stock Chart -->
+      <app-stock-chart
+        [historicalData]="stockData.historical.records"
+        [stockSymbol]="stockData.stock.code"
+        style="margin-top: 16px; display: block"
+      >
+      </app-stock-chart>
+
+      <!-- Company Description -->
+      <nz-card nzTitle="Mô tả công ty" style="margin-top: 16px">
+        <p>{{ stockData.stock.companyDescription }}</p>
+      </nz-card>
+
+      <!-- Recent News -->
+      <nz-card
+        nzTitle="Tin tức liên quan"
+        style="margin-top: 16px"
+        *ngIf="stockData.news.articles.length > 0"
+      >
+        <div class="news-list">
+          <div
+            *ngFor="let article of stockData.news.articles.slice(0, 5); let last = last"
+            class="news-item"
+          >
+            <h4>
+              <a [href]="article.url" target="_blank" rel="noopener noreferrer">
+                {{ article.title }}
+              </a>
+            </h4>
+            <div class="news-date">{{ formatDate(article.publishedDate) }}</div>
+            <div class="news-summary" [innerHTML]="article.summary"></div>
+            <nz-divider *ngIf="!last"></nz-divider>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </nz-spin>
+</div>

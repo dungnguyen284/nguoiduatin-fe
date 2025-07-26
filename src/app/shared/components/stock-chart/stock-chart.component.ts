@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -14,7 +22,7 @@ import { HistoricalRecord } from '../../../models/stock-response.model';
     NzRadioModule,
     NzCardModule,
     NzButtonModule,
-    FormsModule
+    FormsModule,
   ],
   template: `
     <nz-card nzTitle="Biểu đồ giá" [nzExtra]="chartControls">
@@ -24,7 +32,10 @@ import { HistoricalRecord } from '../../../models/stock-response.model';
     </nz-card>
 
     <ng-template #chartControls>
-      <nz-radio-group [(ngModel)]="chartType" (ngModelChange)="onChartTypeChange()">
+      <nz-radio-group
+        [(ngModel)]="chartType"
+        (ngModelChange)="onChartTypeChange()"
+      >
         <label nz-radio-button nzValue="line">
           <span>Đường</span>
         </label>
@@ -34,32 +45,35 @@ import { HistoricalRecord } from '../../../models/stock-response.model';
       </nz-radio-group>
     </ng-template>
   `,
-  styles: [`
-    .chart-container {
-      position: relative;
-      height: 400px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    canvas {
-      max-width: 100%;
-      max-height: 400px;
-      border: 1px solid #f0f0f0;
-      border-radius: 6px;
-    }
+  styles: [
+    `
+      .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-    nz-radio-group {
-      margin-left: 8px;
-    }
-  `]
+      canvas {
+        max-width: 100%;
+        max-height: 400px;
+        border: 1px solid #f0f0f0;
+        border-radius: 6px;
+      }
+
+      nz-radio-group {
+        margin-left: 8px;
+      }
+    `,
+  ],
 })
 export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() historicalData: HistoricalRecord[] = [];
   @Input() stockSymbol: string = '';
-  @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chartCanvas', { static: true })
+  chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   chartType: 'line' | 'candlestick' = 'line';
 
@@ -94,8 +108,8 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
 
     // Sort data by date
-    const sortedData = [...this.historicalData].sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    const sortedData = [...this.historicalData].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
     // Clear canvas
@@ -108,13 +122,17 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private drawLineChart(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, data: HistoricalRecord[]) {
+  private drawLineChart(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    data: HistoricalRecord[]
+  ) {
     const padding = 50;
     const chartWidth = canvas.width - 2 * padding;
     const chartHeight = canvas.height - 2 * padding;
 
     // Find min and max values
-    const prices = data.map(d => d.close);
+    const prices = data.map((d) => d.close);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
     const priceRange = maxPrice - minPrice;
@@ -126,17 +144,17 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
     // Draw grid lines
     ctx.strokeStyle = '#e8e8e8';
     ctx.lineWidth = 1;
-    
+
     // Horizontal grid lines
     for (let i = 0; i <= 5; i++) {
-      const y = padding + (i * chartHeight / 5);
+      const y = padding + (i * chartHeight) / 5;
       ctx.beginPath();
       ctx.moveTo(padding, y);
       ctx.lineTo(canvas.width - padding, y);
       ctx.stroke();
-      
+
       // Price labels
-      const price = maxPrice - (i * priceRange / 5);
+      const price = maxPrice - (i * priceRange) / 5;
       ctx.fillStyle = '#666';
       ctx.font = '12px Arial';
       ctx.textAlign = 'right';
@@ -151,11 +169,11 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.moveTo(x, padding);
       ctx.lineTo(x, canvas.height - padding);
       ctx.stroke();
-      
+
       // Date labels
-      const date = new Date(data[i].date).toLocaleDateString('vi-VN', { 
-        month: 'short', 
-        day: 'numeric' 
+      const date = new Date(data[i].date).toLocaleDateString('vi-VN', {
+        month: 'short',
+        day: 'numeric',
       });
       ctx.fillStyle = '#666';
       ctx.font = '12px Arial';
@@ -167,26 +185,32 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
     ctx.beginPath();
     ctx.strokeStyle = '#1890ff';
     ctx.lineWidth = 2;
-    
+
     data.forEach((record, index) => {
       const x = padding + index * pointWidth;
-      const y = padding + chartHeight - ((record.close - minPrice) / priceRange) * chartHeight;
-      
+      const y =
+        padding +
+        chartHeight -
+        ((record.close - minPrice) / priceRange) * chartHeight;
+
       if (index === 0) {
         ctx.moveTo(x, y);
       } else {
         ctx.lineTo(x, y);
       }
     });
-    
+
     ctx.stroke();
 
     // Draw points
     ctx.fillStyle = '#1890ff';
     data.forEach((record, index) => {
       const x = padding + index * pointWidth;
-      const y = padding + chartHeight - ((record.close - minPrice) / priceRange) * chartHeight;
-      
+      const y =
+        padding +
+        chartHeight -
+        ((record.close - minPrice) / priceRange) * chartHeight;
+
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, 2 * Math.PI);
       ctx.fill();
@@ -196,16 +220,24 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
     ctx.fillStyle = '#262626';
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(`${this.stockSymbol} - Biểu đồ giá đóng cửa`, canvas.width / 2, 30);
+    ctx.fillText(
+      `${this.stockSymbol} - Biểu đồ giá đóng cửa`,
+      canvas.width / 2,
+      30
+    );
   }
 
-  private drawCandlestickChart(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, data: HistoricalRecord[]) {
+  private drawCandlestickChart(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    data: HistoricalRecord[]
+  ) {
     const padding = 50;
     const chartWidth = canvas.width - 2 * padding;
     const chartHeight = canvas.height - 2 * padding;
 
     // Find min and max values
-    const allPrices = data.flatMap(d => [d.open, d.close, d.high, d.low]);
+    const allPrices = data.flatMap((d) => [d.open, d.close, d.high, d.low]);
     const minPrice = Math.min(...allPrices);
     const maxPrice = Math.max(...allPrices);
     const priceRange = maxPrice - minPrice;
@@ -217,15 +249,15 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
     // Draw grid lines (same as line chart)
     ctx.strokeStyle = '#e8e8e8';
     ctx.lineWidth = 1;
-    
+
     for (let i = 0; i <= 5; i++) {
-      const y = padding + (i * chartHeight / 5);
+      const y = padding + (i * chartHeight) / 5;
       ctx.beginPath();
       ctx.moveTo(padding, y);
       ctx.lineTo(canvas.width - padding, y);
       ctx.stroke();
-      
-      const price = maxPrice - (i * priceRange / 5);
+
+      const price = maxPrice - (i * priceRange) / 5;
       ctx.fillStyle = '#666';
       ctx.font = '12px Arial';
       ctx.textAlign = 'right';
@@ -238,14 +270,26 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     data.forEach((record, index) => {
       const x = padding + index * candleSpacing + candleSpacing / 2;
-      
-      const openY = padding + chartHeight - ((record.open - minPrice) / priceRange) * chartHeight;
-      const closeY = padding + chartHeight - ((record.close - minPrice) / priceRange) * chartHeight;
-      const highY = padding + chartHeight - ((record.high - minPrice) / priceRange) * chartHeight;
-      const lowY = padding + chartHeight - ((record.low - minPrice) / priceRange) * chartHeight;
+
+      const openY =
+        padding +
+        chartHeight -
+        ((record.open - minPrice) / priceRange) * chartHeight;
+      const closeY =
+        padding +
+        chartHeight -
+        ((record.close - minPrice) / priceRange) * chartHeight;
+      const highY =
+        padding +
+        chartHeight -
+        ((record.high - minPrice) / priceRange) * chartHeight;
+      const lowY =
+        padding +
+        chartHeight -
+        ((record.low - minPrice) / priceRange) * chartHeight;
 
       const isGreen = record.close >= record.open;
-      
+
       // Draw wick (high-low line)
       ctx.strokeStyle = isGreen ? '#52c41a' : '#ff4d4f';
       ctx.lineWidth = 1;
@@ -258,20 +302,20 @@ export class StockChartComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.fillStyle = isGreen ? '#52c41a' : '#ff4d4f';
       ctx.strokeStyle = isGreen ? '#389e0d' : '#cf1322';
       ctx.lineWidth = 1;
-      
+
       const bodyTop = Math.min(openY, closeY);
       const bodyHeight = Math.abs(closeY - openY);
-      
-      ctx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
-      ctx.strokeRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
+
+      ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+      ctx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
     // Draw date labels
     for (let i = 0; i < data.length; i += Math.ceil(data.length / 6)) {
       const x = padding + i * candleSpacing + candleSpacing / 2;
-      const date = new Date(data[i].date).toLocaleDateString('vi-VN', { 
-        month: 'short', 
-        day: 'numeric' 
+      const date = new Date(data[i].date).toLocaleDateString('vi-VN', {
+        month: 'short',
+        day: 'numeric',
       });
       ctx.fillStyle = '#666';
       ctx.font = '12px Arial';
